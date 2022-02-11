@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { createAccessToken, createRefreshToken } from '../service/session.service'
 import { validatePassword } from '../service/user.service'
 import prisma from '../utils/prisma'
+import logger from '../utils/logger'
 
 export async function createUserSessionHandler(req: Request, res: Response) {
   const user = await validatePassword(req.body)
