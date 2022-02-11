@@ -1,5 +1,10 @@
 import { Express, Request, Response } from 'express'
-import { getAssetHandler, uploadAssetHandler } from './controller/asset.controller'
+import {
+  getAssetHandler,
+  downloadAssetHandler,
+  uploadAssetHandler,
+  deleteAssetHandler,
+} from './controller/asset.controller'
 import {
   createUserSessionHandler,
   deleteSessionHandler,
@@ -24,6 +29,8 @@ function routes(app: Express) {
   // TODO guard user
   app.post('/api/assets', upload.single('file'), uploadAssetHandler)
   app.get('/api/assets/:key', getAssetHandler)
+  app.delete('/api/assets/:key', deleteAssetHandler)
+  app.get('/api/download/:key', downloadAssetHandler)
 }
 
 export default routes

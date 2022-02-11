@@ -5,12 +5,13 @@
   "author": "Touhid Rahman",
   "license": "MIT",
   "scripts": {
+    "start": "node build/src/app.js",
     "dev": "nodemon src/app.ts",
     "build": "tsc",
+    "prisma": "npx prisma generate",
+    "prisma:generate": "npx prisma generate",
     "prisma:studio": "npx prisma studio",
     "prisma:push": "npx prisma db push",
-    "prisma:generate": "npx prisma generate",
-    "prisma:generate:watch": "npx prisma generate --watch",
     "format": "prettier --write 'src/**/*.{ts,js,json}'"
   },
   "dependencies": {
@@ -33,7 +34,6 @@
     "prisma": "^3.9.2",
     "prom-client": "^14.0.1",
     "response-time": "^2.3.2",
-    "stream-mime-type": "^1.0.2",
     "swagger-jsdoc": "^6.1.0",
     "swagger-ui-express": "^4.3.0",
     "zod": "^3.11.6"
