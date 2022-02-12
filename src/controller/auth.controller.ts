@@ -1,7 +1,8 @@
 import dayjs from 'dayjs'
 import { Request, Response } from 'express'
 import { createAccessToken, createRefreshToken } from '../service/auth.service'
-import { sendPasswordResetEmail } from '../service/mailer.service'
+import { sendPasswordResetEmail, sendPasswordResetSuccessEmail } from '../service/mailer.service'
+import { generatePasswordHash } from '../service/password.service'
 import { validatePassword } from '../service/user.service'
 import { randomId } from '../utils/id'
 import logger from '../utils/logger'
@@ -85,13 +86,44 @@ export async function forgotPasswordHandler(req: Request, res: Response) {
     await sendPasswordResetEmail({
       to: user.email,
       token: passwordResetRecord.token,
-      name: user.firstName + user.lastName,
+      name: user.firstName + ' ' + user.lastName,
     })
 
     logger.info(`AUTH: Password reset email sent for user ${user.id}`)
     return res.sendStatus(200)
   } catch (error: any) {
     logger.error(`AUTH: Error sending forgot password email: ${error.message}`)
+    return res.status(500).send(error.message)
+  }
+}
+
+export async function resetPasswordHandler(req: Request, res: Response) {
+  try {
+    const token = req.params.token
+
+    const passwordResetRecord = await prisma.passwordReset.findFirst({
+      where: { token },
+    })
+    if (!passwordResetRecord) throw new Error('Invalid token')
+    if (passwordResetRecord.validUntil < new Date()) throw new Error('Token expired')
+
+    const user = await prisma.user.update({
+      where: { id: passwordResetRecord?.userId },
+      data: {
+        password: await generatePasswordHash(req.body.password),
+      },
+    })
+
+    await sendPasswordResetSuccessEmail({
+      to: user.email,
+      name: user.firstName + ' ' + user.lastName,
+    })
+    await prisma.passwordReset.delete({ where: { id: passwordResetRecord.id } })
+
+    logger.info(`AUTH: Password reset success for user ${user.id}`)
+    res.status(200).send()
+  } catch (error: any) {
+    logger.error(`AUTH: Error resetting password: ${error.message}`)
     return res.status(500).send(error.message)
   }
 }

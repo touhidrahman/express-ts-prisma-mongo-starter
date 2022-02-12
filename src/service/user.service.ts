@@ -1,10 +1,9 @@
 import { omit } from 'lodash'
-import { LoginInput } from '../schema/auth.schema'
-import { CreateUserInput } from '../schema/user.schema'
+import { LoginInput, SignupInput } from '../schema/auth.schema'
 import prisma from '../utils/prisma'
 import { comparePassword, generatePasswordHash } from './password.service'
 
-export async function createUser(input: CreateUserInput['body']) {
+export async function createUser(input: SignupInput) {
   try {
     const userExists = await prisma.user.findUnique({
       where: { email: input.email },

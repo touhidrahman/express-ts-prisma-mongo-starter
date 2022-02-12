@@ -49,12 +49,24 @@ export async function sendWelcomeEmail(to: string, name: string) {
 export async function sendPasswordResetEmail(data: { to: string; name: string; token: string }) {
   const link = `${frontendBaseUrl}/reset-password/${data.token}`
   const subject = 'Your password reset link'
-  const text = `${data.name}, click on the link below to reset your password. The link will expire in 1 day. Link: ${link}`
+  const text = `Dear ${data.name}, click on the link below to reset your password. The link will expire in 1 day. Link: ${link}`
   const html = `<body>
-    <p>${data.name}, </p>
+    <p>Dear ${data.name}, </p>
     <p>Click on the link below to reset your password. The link will expire in 1 day.</p>
     <p><a href=${link}>Reset your password</a></p>
     <p>If the link is not working, copy paste this: ${link}</p>
+    </body>`
+
+  await sendMail(data.to, subject, text, html)
+}
+
+export async function sendPasswordResetSuccessEmail(data: { to: string; name: string }) {
+  const subject = 'Your password was reset successfully'
+  const text = `Dear ${data.name}, Your password has been reset successfully. If you have not done it, please take action immediately.`
+  const html = `<body>
+    <p>Dear ${data.name}, </p>
+    <p>Your password has been reset successfully.</p>
+    <p>If you have not done it, please take action immediately.</p>
     </body>`
 
   await sendMail(data.to, subject, text, html)
