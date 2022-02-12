@@ -1,5 +1,7 @@
 import config from 'config'
+import dayjs from 'dayjs'
 import { get } from 'lodash'
+import { randomId } from '../utils/id'
 import { signJwt, verifyJwt } from '../utils/jwt.utils'
 import prisma from '../utils/prisma'
 
@@ -31,4 +33,34 @@ export async function reIssueAccessToken({ refreshToken }: { refreshToken: strin
   if (!user) return false
 
   return createAccessToken(user, session.id)
+}
+
+export async function createOrUpdateEmailVerificationRecord(userId: string) {
+  return await prisma.emailVerification.upsert({
+    where: { userId: userId },
+    update: {
+      token: randomId(40),
+      validUntil: dayjs().add(1, 'day').toDate(),
+    },
+    create: {
+      token: randomId(40),
+      validUntil: dayjs().add(1, 'day').toDate(),
+      userId: userId,
+    },
+  })
+}
+
+export async function createOrUpdatePasswordResetRecord(userId: string) {
+  return await prisma.passwordReset.upsert({
+    where: { userId: userId },
+    update: {
+      token: randomId(40),
+      validUntil: dayjs().add(1, 'day').toDate(),
+    },
+    create: {
+      userId: userId,
+      token: randomId(40),
+      validUntil: dayjs().add(1, 'day').toDate(),
+    },
+  })
 }

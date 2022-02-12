@@ -1,12 +1,77 @@
-import dayjs from 'dayjs'
 import { Request, Response } from 'express'
-import { createAccessToken, createRefreshToken } from '../service/auth.service'
-import { sendPasswordResetEmail, sendPasswordResetSuccessEmail } from '../service/mailer.service'
+import { SignupInput } from '../schema/auth.schema'
+import {
+  createAccessToken,
+  createOrUpdateEmailVerificationRecord,
+  createOrUpdatePasswordResetRecord,
+  createRefreshToken,
+} from '../service/auth.service'
+import {
+  sendPasswordResetEmail,
+  sendPasswordResetSuccessEmail,
+  sendWelcomeEmail,
+} from '../service/mailer.service'
 import { generatePasswordHash } from '../service/password.service'
-import { validatePassword } from '../service/user.service'
-import { randomId } from '../utils/id'
+import { createUser, validatePassword } from '../service/user.service'
 import logger from '../utils/logger'
 import prisma from '../utils/prisma'
+
+export async function createUserHandler(req: Request<{}, {}, SignupInput>, res: Response) {
+  try {
+    const user = await createUser(req.body)
+    const tokenRecord = await createOrUpdateEmailVerificationRecord(user.id)
+
+    await sendWelcomeEmail({
+      to: user.email,
+      token: tokenRecord.token,
+      name: `${user.firstName} ${user.lastName}`,
+    })
+
+    logger.info(`AUTH: User created: ${user.id}`)
+    return res.send(user)
+  } catch (e: any) {
+    logger.error(`AUTH: Error creating user: ${e.message}`)
+    return res.status(409).send({ message: e.message })
+  }
+}
+
+export async function verifyEmailHandler(req: Request, res: Response) {
+  try {
+    const userId = res.locals.user.id
+
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        emailVerified: true,
+      },
+    })
+
+    logger.info(`AUTH: Email verification success for user ${user.id}`)
+    res.status(200).send()
+  } catch (e: any) {
+    logger.error(`AUTH: Error email verification for user: ${e.message}`)
+    return res.status(500).send({ message: e.message })
+  }
+}
+
+export async function resendVerficiationHandler(req: Request, res: Response) {
+  try {
+    const user = res.locals.user
+    const tokenRecord = await createOrUpdateEmailVerificationRecord(user.id)
+
+    await sendWelcomeEmail({
+      to: user.email,
+      token: tokenRecord.token,
+      name: `${user.firstName} ${user.lastName}`,
+    })
+
+    logger.info(`AUTH: Email verification resent for user: ${user.id}`)
+    return res.send(user)
+  } catch (e: any) {
+    logger.error(`AUTH: Error resending email verification for user: ${e.message}`)
+    return res.status(500).send({ message: e.message })
+  }
+}
 
 export async function loginHandler(req: Request, res: Response) {
   const user = await validatePassword(req.body)
@@ -70,18 +135,7 @@ export async function forgotPasswordHandler(req: Request, res: Response) {
       return res.status(404).send('User not found')
     }
 
-    const passwordResetRecord = await prisma.passwordReset.upsert({
-      where: { userId: user.id },
-      update: {
-        token: randomId(40),
-        validUntil: dayjs().add(1, 'day').toDate(),
-      },
-      create: {
-        userId: user.id,
-        token: randomId(40),
-        validUntil: dayjs().add(1, 'day').toDate(),
-      },
-    })
+    const passwordResetRecord = await createOrUpdatePasswordResetRecord(user.id)
 
     await sendPasswordResetEmail({
       to: user.email,
@@ -113,10 +167,6 @@ export async function resetPasswordHandler(req: Request, res: Response) {
       await sendPasswordResetSuccessEmail({
         to: user.email,
         name: user.firstName + ' ' + user.lastName,
-      })
-
-      await prisma.passwordReset.deleteMany({
-        where: { token },
       })
     }
 

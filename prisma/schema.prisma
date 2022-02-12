@@ -8,6 +8,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserRole {
+  ADMIN
+  MODERATOR
+  USER
+}
+
 model EmailChange {
   id         String   @id @default(dbgenerated()) @map("_id") @db.ObjectId
   token      String   @default(uuid())
@@ -34,31 +40,24 @@ model PasswordReset {
 }
 
 model User {
-  id        String    @id @default(dbgenerated()) @map("_id") @db.ObjectId
-  email     String    @unique
-  password  String
-  firstName String
-  lastName  String
-  image     String?
-  birthDate DateTime? @db.Date
-  role      UserRole  @default(USER)
+  id            String    @id @default(dbgenerated()) @map("_id") @db.ObjectId
+  email         String    @unique
+  password      String
+  firstName     String
+  lastName      String
+  image         String?
+  birthDate     DateTime? @db.Date
+  role          UserRole  @default(USER)
+  emailVerified Boolean   @default(false)
 
-  emailVerified     Boolean            @default(false)
   emailChange       EmailChange?
   emailVerification EmailVerification?
   passwordReset     PasswordReset?
-
-  posts    Post[]
-  sessions Session[]
+  posts             Post[]
+  sessions          Session[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-}
-
-enum UserRole {
-  ADMIN
-  MODERATOR
-  USER
 }
 
 model Session {
@@ -83,6 +82,8 @@ model Asset {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+// Models for your application
 
 model Post {
   id        String  @id @default(dbgenerated()) @map("_id") @db.ObjectId

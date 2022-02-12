@@ -10,10 +10,11 @@ import {
   getUserSessionsHandler,
   loginHandler,
   logoutHandler,
+  resendVerficiationHandler,
   resetPasswordHandler,
 } from './controller/auth.controller'
 import { createUserHandler } from './controller/user.controller'
-import checkToken from './middleware/check-token'
+import { checkResetToken, checkVerificationToken } from './middleware/check-token'
 import requireUser from './middleware/requireUser'
 import { upload } from './middleware/upload'
 import validate from './middleware/validateResource'
@@ -27,15 +28,14 @@ import {
 function routes(app: Express) {
   app.get('/healthcheck', (req: Request, res: Response) => res.sendStatus(200))
 
-  app.post('/api/users', validate(registerSchema), createUserHandler)
-
-  app.post('/api/auth', validate(authSchema), loginHandler)
+  app.post('/api/auth/register', validate(registerSchema), createUserHandler)
+  app.post('/api/auth/login', validate(authSchema), loginHandler)
   app.delete('/api/auth', requireUser, logoutHandler)
   app.get('/api/auth/sessions', requireUser, getUserSessionsHandler)
   app.post('/api/auth/forgot-password', validate(forgotPasswordSchema), forgotPasswordHandler)
   app.post(
     '/api/auth/reset-password/:token',
-    checkToken,
+    checkResetToken,
     validate(resetPasswordSchema),
     resetPasswordHandler
   )
@@ -45,6 +45,8 @@ function routes(app: Express) {
     validate(resetPasswordSchema),
     resetPasswordHandler
   )
+  app.post('/api/auth/resend-verification', requireUser, resendVerficiationHandler)
+  app.post('/api/auth/verify-email/:token', checkVerificationToken, resendVerficiationHandler)
 
   // TODO guard user
   app.post('/api/assets', upload.single('file'), uploadAssetHandler)

@@ -35,15 +35,17 @@ export async function sendMail(
   logger.info(`EMAIL: Email sent: ${sendResult.messageId}`)
 }
 
-export async function sendWelcomeEmail(to: string, name: string) {
+export async function sendWelcomeEmail(data: { to: string; name: string; token: string }) {
   const subject = 'Welcome to the Site!'
-  const text = `Welcome to the site, ${name}. Let me know how you get along with the site.`
+  const link = `${frontendBaseUrl}/verify-email/${data.token}`
+  const text = `Welcome to the site, ${data.name}. Please click on this link to verify your email.\n\n${link}`
   const html = `<body>
-    <h1>Welcome to the Site, ${name}</h1>
-    <p>Let me know how you get along with the site.</p>
+    <h1>Welcome to the Site, ${data.name}</h1>
+    <p>Please click on this link to verify your email.</p>
+    <p><a href="${link}">${link}</a></p>
     </body>`
 
-  await sendMail(to, subject, text, html)
+  await sendMail(data.to, subject, text, html)
 }
 
 export async function sendPasswordResetEmail(data: { to: string; name: string; token: string }) {
