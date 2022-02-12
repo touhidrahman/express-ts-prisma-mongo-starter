@@ -4,18 +4,38 @@ import config from 'config'
 import dayjs from 'dayjs'
 import { randomId } from '../utils/id'
 
-const accessKeyId = config.get<string>('awsAccessKeyId')
-const secretAccessKey = config.get<string>('awsSecretAccessKey')
-const bucket = config.get<string>('awsBucketName')
-const region = config.get<string>('awsDefaultRegion')
+export type MulterUploadedFile = {
+  fieldname: string
+  originalname: string
+  encoding: string
+  mimetype: string
+  size: number
+  bucket: string
+  key: string
+  acl: string
+  contentType: string
+  contentDisposition: string
+  contentEncoding: string
+  storageClass: string
+  serverSideEncryption: string
+  metadata: { fieldName: string }
+  location: string
+  etag: string
+  versionId: undefined
+}
 
-const s3 = new S3({
+export const accessKeyId = config.get<string>('awsAccessKeyId')
+export const secretAccessKey = config.get<string>('awsSecretAccessKey')
+export const bucket = config.get<string>('awsBucketName')
+export const region = config.get<string>('awsDefaultRegion')
+
+export const s3 = new S3({
   region,
   accessKeyId,
   secretAccessKey,
 })
 
-function makeFileName(originalFileName: string, folder = '') {
+export function makeFileName(originalFileName: string, folder = '') {
   const ext = originalFileName.split('.').slice(-1)
   const generatedName = `${dayjs().format('YYYYMMDD_HHmmss')}_${randomId()}.${ext}`
   return folder ? `${folder}/${generatedName}` : `${generatedName}`
