@@ -13,6 +13,7 @@ import {
   resetPasswordHandler,
 } from './controller/auth.controller'
 import { createUserHandler } from './controller/user.controller'
+import checkToken from './middleware/check-token'
 import requireUser from './middleware/requireUser'
 import { upload } from './middleware/upload'
 import validate from './middleware/validateResource'
@@ -32,7 +33,18 @@ function routes(app: Express) {
   app.delete('/api/auth', requireUser, logoutHandler)
   app.get('/api/auth/sessions', requireUser, getUserSessionsHandler)
   app.post('/api/auth/forgot-password', validate(forgotPasswordSchema), forgotPasswordHandler)
-  app.post('/api/auth/reset-password/:token', validate(resetPasswordSchema), resetPasswordHandler)
+  app.post(
+    '/api/auth/reset-password/:token',
+    checkToken,
+    validate(resetPasswordSchema),
+    resetPasswordHandler
+  )
+  app.post(
+    '/api/auth/change-password',
+    requireUser,
+    validate(resetPasswordSchema),
+    resetPasswordHandler
+  )
 
   // TODO guard user
   app.post('/api/assets', upload.single('file'), uploadAssetHandler)

@@ -99,26 +99,26 @@ export async function forgotPasswordHandler(req: Request, res: Response) {
 
 export async function resetPasswordHandler(req: Request, res: Response) {
   try {
-    const token = req.params.token
-
-    const passwordResetRecord = await prisma.passwordReset.findFirst({
-      where: { token },
-    })
-    if (!passwordResetRecord) throw new Error('Invalid token')
-    if (passwordResetRecord.validUntil < new Date()) throw new Error('Token expired')
+    const userId = res.locals.user.id
+    const token = req.params.token ?? ''
 
     const user = await prisma.user.update({
-      where: { id: passwordResetRecord?.userId },
+      where: { id: userId },
       data: {
         password: await generatePasswordHash(req.body.password),
       },
     })
 
-    await sendPasswordResetSuccessEmail({
-      to: user.email,
-      name: user.firstName + ' ' + user.lastName,
-    })
-    await prisma.passwordReset.delete({ where: { id: passwordResetRecord.id } })
+    if (token) {
+      await sendPasswordResetSuccessEmail({
+        to: user.email,
+        name: user.firstName + ' ' + user.lastName,
+      })
+
+      await prisma.passwordReset.deleteMany({
+        where: { token },
+      })
+    }
 
     logger.info(`AUTH: Password reset success for user ${user.id}`)
     res.status(200).send()

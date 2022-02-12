@@ -30,9 +30,6 @@ export const resetPasswordSchema = z.object({
       message: 'Passwords do not match',
       path: ['passwordConfirmation'],
     }),
-  params: z.object({
-    token: z.string().min(40),
-  }),
 })
 
 export const registerSchema = object({

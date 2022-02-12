@@ -1,4 +1,6 @@
 @host=http://localhost:3000/api
+@accessToken=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZjMzNWJmMDBiMzJlZjAwMGJkOWE5NCIsImVtYWlsIjoiYTFAYi5jb20iLCJmaXJzdE5hbWUiOiJNYXgiLCJsYXN0TmFtZSI6Ik11c3Rhcm1hbm4iLCJpbWFnZSI6bnVsbCwiYmlydGhEYXRlIjpudWxsLCJyb2xlIjoiVVNFUiIsImVtYWlsVmVyaWZpZWQiOmZhbHNlLCJjcmVhdGVkQXQiOiIyMDIxLTA3LTE3VDE5OjU1OjQzLjUyMloiLCJ1cGRhdGVkQXQiOiIyMDIyLTAyLTEyVDAyOjA5OjEzLjkzMFoiLCJzZXNzaW9uIjoiNjIwNzE3YTRmZWRiZTE5NGY0MWQ3YWI5IiwiaWF0IjoxNjQ0NjMxOTcyLCJleHAiOjE2NDQ2MzI4NzJ9.VB-jyKsVzTHOooKu9o0tQXXnJBsHc9yHo36Zlzy32m9F7PbcnzE5Pz91tk-W-BHJY7WunH0ZjBwTCpusBdEtM6CjN0ilYoLxq4uVQSrfTAwbllgZa6Ybx3Kmf5vpfrN8DONW3YiAvYQbdDDiAZtEmnpXks1NZ02OP25h-BpoPKE
+@refreshToken=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZjMzNWJmMDBiMzJlZjAwMGJkOWE5NCIsImVtYWlsIjoiYTFAYi5jb20iLCJmaXJzdE5hbWUiOiJNYXgiLCJsYXN0TmFtZSI6Ik11c3Rhcm1hbm4iLCJpbWFnZSI6bnVsbCwiYmlydGhEYXRlIjpudWxsLCJyb2xlIjoiVVNFUiIsImVtYWlsVmVyaWZpZWQiOmZhbHNlLCJjcmVhdGVkQXQiOiIyMDIxLTA3LTE3VDE5OjU1OjQzLjUyMloiLCJ1cGRhdGVkQXQiOiIyMDIyLTAyLTEyVDAyOjA5OjEzLjkzMFoiLCJzZXNzaW9uIjoiNjIwNzE3YTRmZWRiZTE5NGY0MWQ3YWI5IiwiaWF0IjoxNjQ0NjMxOTcyLCJleHAiOjE2NzYxODk1NzJ9.eMrbvbu26jGvGzqO1zm8p2Q5xhZGknyKsUSEzPrB86dbjyE2315_9qvpGeVkIpuOIJ7JYl9keq_IwEz4dPgayUxWzgMZrvaw2eeLCmpEdzu75LuKpAbGiUepbiZB4nLCkyTIjVMl56VqDHbhl48lhyYfTPLdrP_Gr3rRk6_8r58
 
 
 POST {{host}}/users
@@ -14,6 +16,16 @@ Content-Type: application/json
 
 ###
 
+POST {{host}}/auth
+Content-Type: application/json
+
+{
+  "email": "a1@b.com",
+    "password": "Abcd1234!"
+}
+
+###
+
 POST {{host}}/auth/forgot-password
 Content-Type: application/json
 
@@ -23,10 +35,21 @@ Content-Type: application/json
 
 ###
 
-POST {{host}}/auth/reset-password/o5t5wgqb6ft1jx6hm2j92ufqs9rhcmilmkff73z8
+POST {{host}}/auth/reset-password/j1t8y0sbni4admlv6fipw87veqc505qcvcr2ujqa
 Content-Type: application/json
 
 {
   "password": "Abcd1234!",
   "passwordConfirmation": "Abcd1234!"
+}
+
+###
+
+POST {{host}}/auth/change-password
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "password": "Abcd1234!2",
+  "passwordConfirmation": "Abcd1234!2"
 }
