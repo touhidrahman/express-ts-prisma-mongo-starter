@@ -34,7 +34,7 @@ export async function uploadAssetHandler(req: Request, res: Response) {
     return res.send({ filePath: `/assets/${result.Key}` })
   } catch (error: any) {
     logger.warn(`ASSET: ${error.message}`)
-    res.status(500).send({message: error.message})
+    res.status(500).send({ message: error.message })
   }
 }
 
@@ -50,7 +50,7 @@ export async function getAssetHandler(req: Request, res: Response) {
     logger.info(`ASSET: Get ${key}`)
   } catch (error: any) {
     logger.warn(`ASSET: ${error.message}`)
-    res.status(500).send({message: error.message})
+    res.status(500).send({ message: error.message })
   }
 }
 
@@ -66,7 +66,7 @@ export async function downloadAssetHandler(req: Request, res: Response) {
     logger.info(`ASSET: Download ${key}`)
   } catch (error: any) {
     logger.warn(`ASSET: ${error.message}`)
-    res.status(500).send({message: error.message})
+    res.status(500).send({ message: error.message })
   }
 }
 
@@ -86,6 +86,6 @@ export async function deleteAssetHandler(req: Request, res: Response) {
     res.sendStatus(200)
   } catch (error: any) {
     logger.warn(`ASSET: ${error.message}`)
-    res.status(500).send({message: error.message})
+    res.status(500).send({ message: error.message })
   }
 }

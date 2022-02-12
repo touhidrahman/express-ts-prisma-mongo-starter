@@ -18,12 +18,7 @@ const smtpTransport = nodemailer.createTransport({
   },
 })
 
-export async function sendMail(
-  to: string,
-  subject: string,
-  text: string,
-  html: string
-): Promise<void> {
+export async function sendMail(to: string, subject: string, text: string, html: string): Promise<void> {
   const mailOptions = {
     from,
     to,

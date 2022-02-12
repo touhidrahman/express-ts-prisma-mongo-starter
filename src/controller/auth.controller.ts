@@ -6,11 +6,7 @@ import {
   createOrUpdatePasswordResetRecord,
   createRefreshToken,
 } from '../service/auth.service'
-import {
-  sendPasswordResetEmail,
-  sendPasswordResetSuccessEmail,
-  sendWelcomeEmail,
-} from '../service/mailer.service'
+import { sendPasswordResetEmail, sendPasswordResetSuccessEmail, sendWelcomeEmail } from '../service/mailer.service'
 import { generatePasswordHash } from '../service/password.service'
 import { createUser, validatePassword } from '../service/user.service'
 import logger from '../utils/logger'
@@ -31,6 +27,18 @@ export async function registerHandler(req: Request<{}, {}, SignupInput>, res: Re
     return res.send(user)
   } catch (e: any) {
     logger.error(`AUTH: Error creating user: ${e.message}`)
+    return res.status(409).send({ message: e.message })
+  }
+}
+
+export async function createAdminUser(req: Request<{}, {}, SignupInput>, res: Response) {
+  try {
+    const user = await createUser({...req.body, role: 'ADMIN'})
+
+    logger.info(`AUTH: Admin created : ${user.id}`)
+    return res.send(user)
+  } catch (e: any) {
+    logger.error(`AUTH: Error creating admin: ${e.message}`)
     return res.status(409).send({ message: e.message })
   }
 }
@@ -132,7 +140,7 @@ export async function forgotPasswordHandler(req: Request, res: Response) {
 
     if (!user) {
       logger.warn(`AUTH: Password reset request for unknown user ${req.body.email}`)
-      return res.status(404).send({message: 'User not found'})
+      return res.status(404).send({ message: 'User not found' })
     }
 
     const passwordResetRecord = await createOrUpdatePasswordResetRecord(user.id)
@@ -147,7 +155,7 @@ export async function forgotPasswordHandler(req: Request, res: Response) {
     return res.sendStatus(200)
   } catch (error: any) {
     logger.error(`AUTH: Error sending forgot password email: ${error.message}`)
-    return res.status(500).send({message: error.message})
+    return res.status(500).send({ message: error.message })
   }
 }
 
@@ -174,6 +182,26 @@ export async function resetPasswordHandler(req: Request, res: Response) {
     res.status(200).send()
   } catch (error: any) {
     logger.error(`AUTH: Error resetting password: ${error.message}`)
-    return res.status(500).send({message: error.message})
+    return res.status(500).send({ message: error.message })
+  }
+}
+
+export async function changeUserRoleHandler(req: Request, res: Response) {
+  try {
+    const userId = req.params.id
+    const role = req.body.role
+
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        role,
+      },
+    })
+
+    logger.info(`AUTH: User role changed for user ${user.id}`)
+    return res.send(user)
+  } catch (error: any) {
+    logger.error(`AUTH: Error changing user role: ${error.message}`)
+    return res.status(500).send({ message: error.message })
   }
 }

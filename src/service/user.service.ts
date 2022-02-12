@@ -3,7 +3,7 @@ import { LoginInput, SignupInput } from '../schema/auth.schema'
 import prisma from '../utils/prisma'
 import { comparePassword, generatePasswordHash } from './password.service'
 
-export async function createUser(input: SignupInput) {
+export async function createUser(input: SignupInput & { role?: string }) {
   try {
     const userExists = await prisma.user.findUnique({
       where: { email: input.email },
