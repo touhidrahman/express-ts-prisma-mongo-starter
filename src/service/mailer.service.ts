@@ -68,3 +68,17 @@ export async function sendPasswordResetSuccessEmail(data: { to: string; name: st
 
   await sendMail(data.to, subject, text, html)
 }
+
+export async function sendUserEmailChangeEmail(data: { to: string; name: string; userId: string; token: string }) {
+  const link = `${frontendBaseUrl}/change-email/${data.userId}/confirm/${data.token}`
+  const subject = 'Your Request to Change Email Address'
+  const text = `Dear ${data.name}, click on the link below to confirm your new email address. The link will expire in 1 day. Link: ${link}`
+  const html = `<body>
+    <p>Dear ${data.name}, </p>
+    <p>Click on the link below to confirm your new email address. The link will expire in 1 day.</p>
+    <p><a href=${link}>Confirm Email Address Change</a></p>
+    <p>If the link is not working, copy paste this: ${link}</p>
+    </body>`
+
+  await sendMail(data.to, subject, text, html)
+}

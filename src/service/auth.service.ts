@@ -35,16 +35,32 @@ export async function reIssueAccessToken({ refreshToken }: { refreshToken: strin
   return createAccessToken(user, session.id)
 }
 
+function generateTokenAndValidity(length = 40, validDays = 1) {
+  return { token: randomId(length), validUntil: dayjs().add(validDays, 'day').toDate() }
+}
+
+export async function createOrUpdateEmailChangeRecord(userId: string, newEmail: string) {
+  return await prisma.emailChange.upsert({
+    where: { userId: userId },
+    update: {
+      ...generateTokenAndValidity(),
+    },
+    create: {
+      ...generateTokenAndValidity(),
+      userId: userId,
+      newEmail,
+    },
+  })
+}
+
 export async function createOrUpdateEmailVerificationRecord(userId: string) {
   return await prisma.emailVerification.upsert({
     where: { userId: userId },
     update: {
-      token: randomId(40),
-      validUntil: dayjs().add(1, 'day').toDate(),
+      ...generateTokenAndValidity(),
     },
     create: {
-      token: randomId(40),
-      validUntil: dayjs().add(1, 'day').toDate(),
+      ...generateTokenAndValidity(),
       userId: userId,
     },
   })
@@ -54,13 +70,11 @@ export async function createOrUpdatePasswordResetRecord(userId: string) {
   return await prisma.passwordReset.upsert({
     where: { userId: userId },
     update: {
-      token: randomId(40),
-      validUntil: dayjs().add(1, 'day').toDate(),
+      ...generateTokenAndValidity(),
     },
     create: {
       userId: userId,
-      token: randomId(40),
-      validUntil: dayjs().add(1, 'day').toDate(),
+      ...generateTokenAndValidity(),
     },
   })
 }

@@ -1,38 +1,38 @@
 import { Request, Response, NextFunction } from 'express'
 import prisma from '../utils/prisma'
 
-export const checkResetToken = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const token = req.params.token
+export const checkToken = (type: 'EmailChange' | 'EmailVerification' | 'PasswordReset') => {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const token = req.params.token
+      let record
 
-    const passwordResetRecord = await prisma.passwordReset.findFirst({
-      where: { token },
-      select: { validUntil: true, user: true },
-    })
-    if (!passwordResetRecord) throw new Error('Invalid token')
-    if (passwordResetRecord.validUntil < new Date()) throw new Error('Token expired')
+      if (type === 'EmailChange') {
+        record = await prisma.emailChange.findFirst({
+          where: { token },
+          select: { validUntil: true, user: true },
+        })
+      }
+      if (type === 'EmailVerification') {
+        record = await prisma.emailVerification.findFirst({
+          where: { token },
+          select: { validUntil: true, user: true },
+        })
+      }
+      if (type === 'PasswordReset') {
+        record = await prisma.passwordReset.findFirst({
+          where: { token },
+          select: { validUntil: true, user: true },
+        })
+      }
 
-    res.locals.user = passwordResetRecord.user
-    next()
-  } catch (error: any) {
-    return res.status(401).send({ message: error.message })
-  }
-}
+      if (!record) throw new Error('Invalid token')
+      if (record.validUntil < new Date()) throw new Error('Token expired')
 
-export const checkVerificationToken = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const token = req.params.token
-
-    const emailVerificationRecord = await prisma.emailVerification.findFirst({
-      where: { token },
-      select: { validUntil: true, user: true },
-    })
-    if (!emailVerificationRecord) throw new Error('Invalid token')
-    if (emailVerificationRecord.validUntil < new Date()) throw new Error('Token expired')
-
-    res.locals.user = emailVerificationRecord.user
-    next()
-  } catch (error: any) {
-    return res.status(401).send({ message: error.message })
+      res.locals.user = record.user
+      next()
+    } catch (error: any) {
+      return res.status(401).send({ message: error.message })
+    }
   }
 }

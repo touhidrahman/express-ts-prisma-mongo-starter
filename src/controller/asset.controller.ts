@@ -50,7 +50,7 @@ export async function uploadMultipleAssetHandler(req: Request, res: Response) {
   try {
     const files: MulterUploadedFile[] = req.files as any as MulterUploadedFile[]
 
-    const data = files.map(file => ({
+    const data = files.map((file) => ({
       url: file.location,
       bucket: file.bucket,
       mimetype: file.mimetype,
@@ -58,7 +58,7 @@ export async function uploadMultipleAssetHandler(req: Request, res: Response) {
       size: file.size,
     }))
 
-    await prisma.asset.createMany({data})
+    await prisma.asset.createMany({ data })
 
     return res.send({ uploadedFiles: data })
   } catch (error: any) {

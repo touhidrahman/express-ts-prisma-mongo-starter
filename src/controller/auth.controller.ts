@@ -2,11 +2,17 @@ import { Request, Response } from 'express'
 import { SignupInput } from '../schema/auth.schema'
 import {
   createAccessToken,
+  createOrUpdateEmailChangeRecord,
   createOrUpdateEmailVerificationRecord,
   createOrUpdatePasswordResetRecord,
   createRefreshToken,
 } from '../service/auth.service'
-import { sendPasswordResetEmail, sendPasswordResetSuccessEmail, sendWelcomeEmail } from '../service/mailer.service'
+import {
+  sendPasswordResetEmail,
+  sendPasswordResetSuccessEmail,
+  sendUserEmailChangeEmail,
+  sendWelcomeEmail,
+} from '../service/mailer.service'
 import { generatePasswordHash } from '../service/password.service'
 import { createUser, validatePassword } from '../service/user.service'
 import logger from '../utils/logger'
@@ -140,7 +146,7 @@ export async function logoutHandler(req: Request, res: Response) {
     data: { valid: false },
   })
 
-  logger.info(`AUTH: Logout success ${res.locals.user.email}`)
+  logger.info(`AUTH: Logout success ${res.locals.user.id}`)
 
   return res.send({
     accessToken: null,
@@ -220,6 +226,58 @@ export async function changeUserRoleHandler(req: Request, res: Response) {
     return res.send(user)
   } catch (error: any) {
     logger.error(`AUTH: Error changing user role: ${error.message}`)
+    return res.status(500).send({ message: error.message })
+  }
+}
+
+export async function changeEmailHandler(req: Request, res: Response) {
+  try {
+    const userId = req.params.id
+    const email = req.body.email
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    })
+
+    if (!user || !user.emailVerified) throw new Error('User not found or email not verified')
+
+    const record = await createOrUpdateEmailChangeRecord(user.id, email)
+    await sendUserEmailChangeEmail({
+      to: user.email,
+      token: record.token,
+      name: user.firstName + ' ' + user.lastName,
+      userId: user.id,
+    })
+
+    logger.info(`AUTH: User email change requested for user ${user.id}`)
+    return res.send(user)
+  } catch (error: any) {
+    logger.error(`AUTH: Error accepting user email change request for user: ${error.message}`)
+    return res.status(500).send({ message: error.message })
+  }
+}
+
+export async function confirmEmailChangeHandler(req: Request, res: Response) {
+  try {
+    const token = req.params.token
+    const userId = req.params.id
+
+    const record = await prisma.emailChange.findFirst({
+      where: { token, userId },
+      select: { newEmail: true },
+    })
+
+    if (!record) throw new Error('Invalid token')
+
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: { email: record?.newEmail, emailVerified: true },
+    })
+
+    logger.info(`AUTH: User email change confirmed for user ${user?.id}`)
+    return res.status(200).send()
+  } catch (error: any) {
+    logger.error(`AUTH: Error confirming email change for user: ${error.message}`)
     return res.status(500).send({ message: error.message })
   }
 }
