@@ -5,9 +5,9 @@ POST {{host}}/users
 Content-Type: application/json
 
 {
-  "email": "a3@b.com",
-    "password": "Abcd1234",
-    "passwordConfirmation": "Abcd1234",
+  "email": "a4@b.com",
+    "password": "Abcd1234!",
+    "passwordConfirmation": "Abcd1234!",
     "firstName": "A",
     "lastName": "B"
 }
@@ -19,4 +19,14 @@ Content-Type: application/json
 
 {
   "email": "a1@b.com"
+}
+
+###
+
+POST {{host}}/auth/reset-password/o5t5wgqb6ft1jx6hm2j92ufqs9rhcmilmkff73z8
+Content-Type: application/json
+
+{
+  "password": "Abcd1234!",
+  "passwordConfirmation": "Abcd1234!"
 }
