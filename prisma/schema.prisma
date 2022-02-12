@@ -8,11 +8,45 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model EmailChange {
+  id         String   @id @default(dbgenerated()) @map("_id") @db.ObjectId
+  token      String   @default(uuid())
+  newEmail   String
+  userId     String   @unique @db.ObjectId
+  user       User     @relation(fields: [userId], references: [id])
+  validUntil DateTime
+}
+
+model EmailVerification {
+  id         String   @id @default(dbgenerated()) @map("_id") @db.ObjectId
+  token      String   @default(uuid())
+  userId     String   @unique @db.ObjectId
+  user       User     @relation(fields: [userId], references: [id])
+  validUntil DateTime
+}
+
+model PasswordReset {
+  id         String   @id @default(dbgenerated()) @map("_id") @db.ObjectId
+  token      String   @default(uuid())
+  userId     String   @unique @db.ObjectId
+  user       User     @relation(fields: [userId], references: [id])
+  validUntil DateTime
+}
+
 model User {
-  id       String @id @default(dbgenerated()) @map("_id") @db.ObjectId
-  email    String @unique
-  name     String
-  password String
+  id        String    @id @default(dbgenerated()) @map("_id") @db.ObjectId
+  email     String    @unique
+  password  String
+  firstName String
+  lastName  String
+  image     String?
+  birthDate DateTime? @db.Date
+  role      UserRole  @default(USER)
+
+  emailVerified     Boolean            @default(false)
+  emailChange       EmailChange?
+  emailVerification EmailVerification?
+  passwordReset     PasswordReset?
 
   posts    Post[]
   sessions Session[]
@@ -21,18 +55,10 @@ model User {
   updatedAt DateTime @updatedAt
 }
 
-model Post {
-  id        String  @id @default(dbgenerated()) @map("_id") @db.ObjectId
-  title     String
-  content   String?
-  published Boolean @default(false)
-  viewCount Int     @default(0)
-  authorId  Int?
-
-  author User? @relation(fields: [authorId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+enum UserRole {
+  ADMIN
+  MODERATOR
+  USER
 }
 
 model Session {
@@ -54,6 +80,20 @@ model Asset {
   size      Int
   mimetype  String
   bucket    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Post {
+  id        String  @id @default(dbgenerated()) @map("_id") @db.ObjectId
+  title     String
+  content   String?
+  published Boolean @default(false)
+  viewCount Int     @default(0)
+  authorId  String?
+
+  author User? @relation(fields: [authorId], references: [id])
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

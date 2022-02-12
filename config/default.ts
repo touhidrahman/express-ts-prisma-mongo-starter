@@ -11,6 +11,7 @@ export default {
   emailSmtpPassword: "",
   emailSmtpPort: 587,
   emailSmtpUser: "",
+  frontendBaseUrl: "http://localhost:4200",
   port: 3000,
   refreshTokenPrivateKey: ``,
   refreshTokenPublicKey: ``,

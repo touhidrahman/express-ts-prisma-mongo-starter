@@ -1,7 +1,9 @@
 import logger from 'pino'
 import dayjs from 'dayjs'
+import PinoHttp from 'pino-http'
 
-const log = logger({
+const defaultLogger = logger({
+  level: 'info',
   transport: {
     target: 'pino-pretty',
   },
@@ -11,4 +13,4 @@ const log = logger({
   timestamp: () => `,"time":"${dayjs().format()}"`,
 })
 
-export default log
+export default defaultLogger

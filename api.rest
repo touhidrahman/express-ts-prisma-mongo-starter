@@ -1,0 +1,22 @@
+@host=http://localhost:3000/api
+
+
+POST {{host}}/users
+Content-Type: application/json
+
+{
+  "email": "a3@b.com",
+    "password": "Abcd1234",
+    "passwordConfirmation": "Abcd1234",
+    "firstName": "A",
+    "lastName": "B"
+}
+
+###
+
+POST {{host}}/auth/forgot-password
+Content-Type: application/json
+
+{
+  "email": "a1@b.com"
+}

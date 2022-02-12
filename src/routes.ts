@@ -6,25 +6,27 @@ import {
   deleteAssetHandler,
 } from './controller/asset.controller'
 import {
-  createUserSessionHandler,
-  deleteSessionHandler,
+  loginHandler,
+  logoutHandler,
   getUserSessionsHandler,
-} from './controller/session.controller'
+  forgotPasswordHandler,
+} from './controller/auth.controller'
 import { createUserHandler } from './controller/user.controller'
 import requireUser from './middleware/requireUser'
 import { upload } from './middleware/upload'
-import validateResource from './middleware/validateResource'
-import { createSessionSchema } from './schema/session.schema'
+import validate from './middleware/validateResource'
+import { authSchema, forgotPasswordSchema } from './schema/auth.schema'
 import { createUserSchema } from './schema/user.schema'
 
 function routes(app: Express) {
   app.get('/healthcheck', (req: Request, res: Response) => res.sendStatus(200))
 
-  app.post('/api/users', validateResource(createUserSchema), createUserHandler)
+  app.post('/api/users', validate(createUserSchema), createUserHandler)
 
-  app.post('/api/sessions', validateResource(createSessionSchema), createUserSessionHandler)
-  app.get('/api/sessions', requireUser, getUserSessionsHandler)
-  app.delete('/api/sessions', requireUser, deleteSessionHandler)
+  app.post('/api/auth', validate(authSchema), loginHandler)
+  app.delete('/api/auth', requireUser, logoutHandler)
+  app.get('/api/auth/sessions', requireUser, getUserSessionsHandler)
+  app.post('/api/auth/forgot-password', validate(forgotPasswordSchema), forgotPasswordHandler)
 
   // TODO guard user
   app.post('/api/assets', upload.single('file'), uploadAssetHandler)

@@ -1,3 +1,5 @@
 import { customAlphabet } from 'nanoid'
 
-export const randomId = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789', 10)
+export function randomId(n = 10): string {
+  return customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789', n)()
+}

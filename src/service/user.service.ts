@@ -1,4 +1,5 @@
 import { omit } from 'lodash'
+import { LoginInput } from '../schema/auth.schema'
 import { CreateUserInput } from '../schema/user.schema'
 import prisma from '../utils/prisma'
 import { comparePassword, generatePasswordHash } from './password.service'
@@ -15,7 +16,8 @@ export async function createUser(input: CreateUserInput['body']) {
     const password = await generatePasswordHash(input.password)
     const user = await prisma.user.create({
       data: {
-        name: input.name,
+        firstName: input.firstName,
+        lastName: input.lastName,
         email: input.email,
         password,
       },
@@ -27,16 +29,16 @@ export async function createUser(input: CreateUserInput['body']) {
   }
 }
 
-export async function validatePassword({ email, password }: { email: string; password: string }) {
+export async function validatePassword(input: LoginInput) {
   const user = await prisma.user.findUnique({
-    where: { email },
+    where: { email: input.email },
   })
 
   if (!user) {
     return false
   }
 
-  const isValid = await comparePassword(password, user.password)
+  const isValid = await comparePassword(input.password, user.password)
 
   if (!isValid) return false
 

@@ -7,6 +7,7 @@ const port = config.get<number>('emailSmtpPort')
 const user = config.get<string>('emailSmtpUser')
 const pass = config.get<string>('emailSmtpPassword')
 const from = config.get<string>('emailSenderAddress')
+const frontendBaseUrl = config.get<string>('frontendBaseUrl')
 
 const smtpTransport = nodemailer.createTransport({
   host,
@@ -17,7 +18,12 @@ const smtpTransport = nodemailer.createTransport({
   },
 })
 
-export async function sendMail(to: string, subject: string, text: string, html: string): Promise<void> {
+export async function sendMail(
+  to: string,
+  subject: string,
+  text: string,
+  html: string
+): Promise<void> {
   const mailOptions = {
     from,
     to,
@@ -38,4 +44,18 @@ export async function sendWelcomeEmail(to: string, name: string) {
     </body>`
 
   await sendMail(to, subject, text, html)
+}
+
+export async function sendPasswordResetEmail(data: { to: string; name: string; token: string }) {
+  const link = `${frontendBaseUrl}/reset-password/${data.token}`
+  const subject = 'Your password reset link'
+  const text = `${data.name}, click on the link below to reset your password. The link will expire in 1 day. Link: ${link}`
+  const html = `<body>
+    <p>${data.name}, </p>
+    <p>Click on the link below to reset your password. The link will expire in 1 day.</p>
+    <p><a href=${link}>Reset your password</a></p>
+    <p>If the link is not working, copy paste this: ${link}</p>
+    </body>`
+
+  await sendMail(data.to, subject, text, html)
 }
