@@ -34,8 +34,8 @@
     "pino-http": "^6.6.0",
     "pino-pretty": "^7.5.1",
     "prisma": "^3.9.2",
-    "prom-client": "^14.0.1",
     "response-time": "^2.3.2",
+    "stripe": "^8.202.0",
     "swagger-jsdoc": "^6.1.0",
     "swagger-ui-express": "^4.3.0",
     "zod": "^3.11.6"

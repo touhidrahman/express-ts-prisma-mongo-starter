@@ -16,4 +16,7 @@ export default {
   port: "PORT",
   refreshTokenPrivateKey: "REFRESH_PRIVATE_KEY",
   refreshTokenPublicKey: "REFRESH_PUBLIC_KEY",
+  stripePublicKey: "STRIPE_PUBLIC_KEY",
+  stripeSecretKey: "STRIPE_SECRET_KEY",
+  stripeWebhookSecret: "STRIPE_WEBHOOK_SECRET",
 };

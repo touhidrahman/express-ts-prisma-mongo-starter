@@ -13,10 +13,13 @@ import swaggerDocs from './utils/swagger'
 import prisma from './utils/prisma'
 import httpLogger from './middleware/http-logger'
 import rateLimiter from './middleware/rate-limiter'
+import { webhooksHandler } from './controller/webhooks.controller'
 
 const port = config.get<number>('port')
 
 const app = express()
+
+app.post('/webhooks', express.raw({ type: 'application/json' }), webhooksHandler)
 
 app.use(express.json())
 app.use(httpLogger)

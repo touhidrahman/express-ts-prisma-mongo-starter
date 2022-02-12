@@ -1,9 +1,10 @@
+import { Prisma, UserRole } from '@prisma/client'
 import { omit } from 'lodash'
 import { LoginInput, SignupInput } from '../schema/auth.schema'
 import prisma from '../utils/prisma'
 import { comparePassword, generatePasswordHash } from './password.service'
 
-export async function createUser(input: SignupInput & { role?: string }) {
+export async function createUser(input: SignupInput & { role?: UserRole }) {
   try {
     const userExists = await prisma.user.findUnique({
       where: { email: input.email },
@@ -19,6 +20,7 @@ export async function createUser(input: SignupInput & { role?: string }) {
         lastName: input.lastName,
         email: input.email,
         password,
+        role: input.role ?? UserRole.USER,
       },
     })
 

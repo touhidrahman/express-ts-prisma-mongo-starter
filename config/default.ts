@@ -1,7 +1,7 @@
 export default {
   accessTokenPrivateKey: ``,
   accessTokenPublicKey: ``,
-  accessTokenTtl: "15m",
+  accessTokenTtl: "7d",
   awsAccessKeyId: '',
   awsSecretAccessKey: '',
   dbUri: "",
@@ -17,4 +17,7 @@ export default {
   refreshTokenPublicKey: ``,
   refreshTokenTtl: "1y",
   saltWorkFactor: 10,
+  stripePublicKey: "",
+  stripeSecretKey: "",
+  stripeWebhookSecret: "",
 };

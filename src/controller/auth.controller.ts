@@ -33,12 +33,30 @@ export async function registerHandler(req: Request<{}, {}, SignupInput>, res: Re
 
 export async function createAdminUser(req: Request<{}, {}, SignupInput>, res: Response) {
   try {
-    const user = await createUser({...req.body, role: 'ADMIN'})
+    const user = await createUser({ ...req.body, role: 'ADMIN' })
 
     logger.info(`AUTH: Admin created : ${user.id}`)
     return res.send(user)
   } catch (e: any) {
     logger.error(`AUTH: Error creating admin: ${e.message}`)
+    return res.status(409).send({ message: e.message })
+  }
+}
+
+export async function createFirstAdmin(req: Request<{}, {}, SignupInput>, res: Response) {
+  try {
+    const userExists = await prisma.user.findFirst({ where: { role: 'ADMIN' } })
+    if (userExists) {
+      logger.warn(`AUTH: Admin already exists`)
+      throw new Error('Admin user already exists')
+    }
+
+    const user = await createUser({ ...req.body, role: 'ADMIN' })
+
+    logger.info(`AUTH: First Admin created : ${user.id}`)
+    return res.send(user)
+  } catch (e: any) {
+    logger.error(`AUTH: Error creating first admin: ${e.message}`)
     return res.status(409).send({ message: e.message })
   }
 }
