@@ -3,7 +3,7 @@ import * as auth from './controller/auth.controller'
 import * as asset from './controller/asset.controller'
 import { checkResetToken, checkVerificationToken } from './middleware/check-token'
 import { requireAdmin, requireUser } from './middleware/require-user'
-import { upload } from './middleware/upload'
+import { uploadLocal, uploadS3 } from './middleware/upload'
 import validate from './middleware/validate'
 import { authSchema, forgotPasswordSchema, registerSchema, resetPasswordSchema } from './schema/auth.schema'
 
@@ -24,7 +24,8 @@ function routes(app: Express) {
   app.post('/v1/auth/create-first-admin', validate(registerSchema), auth.createFirstAdmin)
 
   app.get('/v1/assets/:key', asset.getAssetHandler)
-  app.post('/v1/assets', requireUser, upload.single('file'), asset.uploadAssetHandler)
+  app.post('/v1/assets', requireUser, uploadLocal.single('file'), asset.uploadAssetHandler)
+  app.post('/v1/assets-multi',  uploadS3.array('files'), asset.uploadMultipleAssetHandler)
   app.delete('/v1/assets/:key', requireUser, asset.deleteAssetHandler)
   app.get('/v1/download/:key', requireUser, asset.downloadAssetHandler)
 }

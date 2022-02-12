@@ -1,3 +1,4 @@
+import { MulterUploadedFile } from '@middleware/upload'
 import { Request, Response } from 'express'
 import fs from 'fs'
 import util from 'util'
@@ -6,6 +7,10 @@ import logger from '../utils/logger'
 import prisma from '../utils/prisma'
 const unlinkFile = util.promisify(fs.unlink)
 
+/**
+ * Use this handler to have more granular control over the upload process in conjunction with the `uploadLocal` middleware.
+ * Uploading to S3 is this handler's responsibility.
+ */
 export async function uploadAssetHandler(req: Request, res: Response) {
   try {
     if (!req.file) throw new Error('No file provided')
@@ -18,7 +23,7 @@ export async function uploadAssetHandler(req: Request, res: Response) {
     const result = await uploadS3Object(file, folder as string)
     if (!result) throw new Error('Upload failed')
 
-    await prisma.asset.create({
+    const record = await prisma.asset.create({
       data: {
         url: result.Location,
         bucket: result.Bucket,
@@ -31,7 +36,31 @@ export async function uploadAssetHandler(req: Request, res: Response) {
     await unlinkFile(file.path)
 
     logger.info(`ASSET: Uploaded ${file.mimetype} to ${result.Location}`)
-    return res.send({ filePath: `/assets/${result.Key}` })
+    return res.send({ record })
+  } catch (error: any) {
+    logger.warn(`ASSET: ${error.message}`)
+    res.status(500).send({ message: error.message })
+  }
+}
+
+/**
+ * This handler assumes the file is already uploaded to S3.
+ */
+export async function uploadMultipleAssetHandler(req: Request, res: Response) {
+  try {
+    const files: MulterUploadedFile[] = req.files as any as MulterUploadedFile[]
+
+    const data = files.map(file => ({
+      url: file.location,
+      bucket: file.bucket,
+      mimetype: file.mimetype,
+      name: file.key,
+      size: file.size,
+    }))
+
+    await prisma.asset.createMany({data})
+
+    return res.send({ uploadedFiles: data })
   } catch (error: any) {
     logger.warn(`ASSET: ${error.message}`)
     res.status(500).send({ message: error.message })
