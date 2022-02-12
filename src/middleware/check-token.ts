@@ -15,7 +15,7 @@ export const checkResetToken = async (req: Request, res: Response, next: NextFun
     res.locals.user = passwordResetRecord.user
     next()
   } catch (error: any) {
-    return res.status(401).send(error.message)
+    return res.status(401).send({message: error.message})
   }
 }
 
@@ -33,6 +33,6 @@ export const checkVerificationToken = async (req: Request, res: Response, next: 
     res.locals.user = emailVerificationRecord.user
     next()
   } catch (error: any) {
-    return res.status(401).send(error.message)
+    return res.status(401).send({message: error.message})
   }
 }

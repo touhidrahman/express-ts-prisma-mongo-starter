@@ -1,18 +1,18 @@
 import { Request, Response } from 'express'
-import { SignupInput } from '../schema/auth.schema'
-import { sendWelcomeEmail } from '../service/mailer.service'
-import { createUser } from '../service/user.service'
 import logger from '../utils/logger'
+import prisma from '../utils/prisma'
 
-export async function createUserHandler(req: Request<{}, {}, SignupInput>, res: Response) {
+export async function updateUserHandler(req: Request, res: Response) {
   try {
-    const user = await createUser(req.body)
-    await sendWelcomeEmail(user.email, `${user.firstName} ${user.lastName}`)
+    const user = await prisma.user.update({
+      where: { id: req.params.id },
+      data: { ...req.body },
+    })
 
-    logger.info(`USER: User created: ${user.id}`)
+    logger.info(`USER: User updated: ${user.id}`)
     return res.send(user)
   } catch (e: any) {
-    logger.error(`USER: Error creating user: ${e.message}`)
-    return res.status(409).send({ message: e.message })
+    logger.error(`USER: Error updating user: ${e.message}`)
+    return res.status(400).send({ message: e.message })
   }
 }

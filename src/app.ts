@@ -8,7 +8,7 @@ import helmet from 'helmet'
 
 import logger from './utils/logger'
 import routes from './routes'
-import deserializeUser from './middleware/deserializeUser'
+import parseJwt from './middleware/parse-jwt'
 import swaggerDocs from './utils/swagger'
 import prisma from './utils/prisma'
 import httpLogger from './middleware/http-logger'
@@ -22,7 +22,7 @@ app.use(express.json())
 app.use(httpLogger)
 app.use(helmet())
 app.use(rateLimiter)
-app.use(deserializeUser)
+app.use(parseJwt)
 
 app.listen(port, async () => {
   await prisma.$connect()

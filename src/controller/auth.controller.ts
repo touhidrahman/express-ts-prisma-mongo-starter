@@ -16,7 +16,7 @@ import { createUser, validatePassword } from '../service/user.service'
 import logger from '../utils/logger'
 import prisma from '../utils/prisma'
 
-export async function createUserHandler(req: Request<{}, {}, SignupInput>, res: Response) {
+export async function registerHandler(req: Request<{}, {}, SignupInput>, res: Response) {
   try {
     const user = await createUser(req.body)
     const tokenRecord = await createOrUpdateEmailVerificationRecord(user.id)
@@ -132,7 +132,7 @@ export async function forgotPasswordHandler(req: Request, res: Response) {
 
     if (!user) {
       logger.warn(`AUTH: Password reset request for unknown user ${req.body.email}`)
-      return res.status(404).send('User not found')
+      return res.status(404).send({message: 'User not found'})
     }
 
     const passwordResetRecord = await createOrUpdatePasswordResetRecord(user.id)
@@ -147,7 +147,7 @@ export async function forgotPasswordHandler(req: Request, res: Response) {
     return res.sendStatus(200)
   } catch (error: any) {
     logger.error(`AUTH: Error sending forgot password email: ${error.message}`)
-    return res.status(500).send(error.message)
+    return res.status(500).send({message: error.message})
   }
 }
 
@@ -174,6 +174,6 @@ export async function resetPasswordHandler(req: Request, res: Response) {
     res.status(200).send()
   } catch (error: any) {
     logger.error(`AUTH: Error resetting password: ${error.message}`)
-    return res.status(500).send(error.message)
+    return res.status(500).send({message: error.message})
   }
 }
