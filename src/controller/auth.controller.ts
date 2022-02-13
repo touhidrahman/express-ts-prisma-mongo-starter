@@ -112,7 +112,7 @@ export async function loginHandler(req: Request, res: Response) {
 
   if (!user) {
     logger.warn(`${logDomain}: Invalid login attempt: ${req.body.email}`)
-    return res.status(401).json({message: 'Invalid email or password'})
+    return res.status(401).json({ message: 'Invalid email or password' })
   }
 
   const session = await prisma.session.create({
