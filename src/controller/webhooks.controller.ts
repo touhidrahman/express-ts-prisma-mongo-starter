@@ -9,7 +9,7 @@ const stripeWebhookSecret = config.get<string>('stripeWebhookSecret')
 export async function webhooksHandler(req: Request, res: Response) {
   if (!stripeWebhookSecret) {
     logger.error('WEBHOOK: Stripe webhook secret is not defined.')
-    return res.status(500).send({ message: 'Server is not configured for stripe webhooks' })
+    return res.status(500).json({ message: 'Server is not configured for stripe webhooks' })
   }
 
   let event = req.body

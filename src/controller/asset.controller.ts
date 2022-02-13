@@ -35,10 +35,10 @@ export async function uploadAssetHandler(req: Request, res: Response) {
     await unlinkFile(file.path)
 
     logger.info(`ASSET: Uploaded ${file.mimetype} to ${result.Location}`)
-    return res.send({ record })
+    return res.json(record)
   } catch (error: any) {
     logger.warn(`ASSET: ${error.message}`)
-    res.status(500).send({ message: error.message })
+    res.status(500).json({ message: error.message })
   }
 }
 
@@ -59,10 +59,10 @@ export async function uploadMultipleAssetHandler(req: Request, res: Response) {
 
     await prisma.asset.createMany({ data })
 
-    return res.send({ uploadedFiles: data })
+    return res.json(data)
   } catch (error: any) {
     logger.warn(`ASSET: ${error.message}`)
-    res.status(500).send({ message: error.message })
+    res.status(500).json({ message: error.message })
   }
 }
 
@@ -78,7 +78,7 @@ export async function getAssetHandler(req: Request, res: Response) {
     logger.info(`ASSET: Get ${key}`)
   } catch (error: any) {
     logger.warn(`ASSET: ${error.message}`)
-    res.status(500).send({ message: error.message })
+    res.status(500).json({ message: error.message })
   }
 }
 
@@ -94,7 +94,7 @@ export async function downloadAssetHandler(req: Request, res: Response) {
     logger.info(`ASSET: Download ${key}`)
   } catch (error: any) {
     logger.warn(`ASSET: ${error.message}`)
-    res.status(500).send({ message: error.message })
+    res.status(500).json({ message: error.message })
   }
 }
 
@@ -114,6 +114,6 @@ export async function deleteAssetHandler(req: Request, res: Response) {
     res.sendStatus(200)
   } catch (error: any) {
     logger.warn(`ASSET: ${error.message}`)
-    res.status(500).send({ message: error.message })
+    res.status(500).json({ message: error.message })
   }
 }

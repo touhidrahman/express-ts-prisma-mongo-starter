@@ -32,7 +32,7 @@ export const checkToken = (type: 'EmailChange' | 'EmailVerification' | 'Password
       res.locals.user = record.user
       next()
     } catch (error: any) {
-      return res.status(401).send({ message: error.message })
+      return res.status(401).json({ message: error.message })
     }
   }
 }

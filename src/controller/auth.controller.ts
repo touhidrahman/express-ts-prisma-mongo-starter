@@ -30,10 +30,10 @@ export async function registerHandler(req: Request<{}, {}, SignupInput>, res: Re
     })
 
     logger.info(`AUTH: User created: ${user.id}`)
-    return res.send(user)
+    return res.json(user)
   } catch (e: any) {
     logger.error(`AUTH: Error creating user: ${e.message}`)
-    return res.status(409).send({ message: e.message })
+    return res.status(409).json({ message: e.message })
   }
 }
 
@@ -42,10 +42,10 @@ export async function createAdminUser(req: Request<{}, {}, SignupInput>, res: Re
     const user = await createUser({ ...req.body, role: 'ADMIN' })
 
     logger.info(`AUTH: Admin created : ${user.id}`)
-    return res.send(user)
+    return res.json(user)
   } catch (e: any) {
     logger.error(`AUTH: Error creating admin: ${e.message}`)
-    return res.status(409).send({ message: e.message })
+    return res.status(409).json({ message: e.message })
   }
 }
 
@@ -60,10 +60,10 @@ export async function createFirstAdmin(req: Request<{}, {}, SignupInput>, res: R
     const user = await createUser({ ...req.body, role: 'ADMIN' })
 
     logger.info(`AUTH: First Admin created : ${user.id}`)
-    return res.send(user)
+    return res.json(user)
   } catch (e: any) {
     logger.error(`AUTH: Error creating first admin: ${e.message}`)
-    return res.status(409).send({ message: e.message })
+    return res.status(409).json({ message: e.message })
   }
 }
 
@@ -79,10 +79,10 @@ export async function verifyEmailHandler(req: Request, res: Response) {
     })
 
     logger.info(`AUTH: Email verification success for user ${user.id}`)
-    res.status(200).send()
+    res.status(200).json()
   } catch (e: any) {
     logger.error(`AUTH: Error email verification for user: ${e.message}`)
-    return res.status(500).send({ message: e.message })
+    return res.status(500).json({ message: e.message })
   }
 }
 
@@ -98,10 +98,10 @@ export async function resendVerficiationHandler(req: Request, res: Response) {
     })
 
     logger.info(`AUTH: Email verification resent for user: ${user.id}`)
-    return res.send(user)
+    return res.json(user)
   } catch (e: any) {
     logger.error(`AUTH: Error resending email verification for user: ${e.message}`)
-    return res.status(500).send({ message: e.message })
+    return res.status(500).json({ message: e.message })
   }
 }
 
@@ -110,7 +110,7 @@ export async function loginHandler(req: Request, res: Response) {
 
   if (!user) {
     logger.warn(`AUTH: Invalid login attempt: ${req.body.email}`)
-    return res.status(401).send('Invalid email or password')
+    return res.status(401).json({message: 'Invalid email or password'})
   }
 
   const session = await prisma.session.create({
@@ -124,7 +124,7 @@ export async function loginHandler(req: Request, res: Response) {
   const refreshToken = createRefreshToken(user, session.id)
 
   logger.info(`AUTH: Login success for user ${user.id}`)
-  return res.send({ accessToken, refreshToken })
+  return res.json({ accessToken, refreshToken })
 }
 
 export async function getUserSessionsHandler(req: Request, res: Response) {
@@ -135,7 +135,7 @@ export async function getUserSessionsHandler(req: Request, res: Response) {
   })
 
   logger.info(`AUTH: User sessions retrieved ${userId}`)
-  return res.send(sessions)
+  return res.json(sessions)
 }
 
 export async function logoutHandler(req: Request, res: Response) {
@@ -148,7 +148,7 @@ export async function logoutHandler(req: Request, res: Response) {
 
   logger.info(`AUTH: Logout success ${res.locals.user.id}`)
 
-  return res.send({
+  return res.json({
     accessToken: null,
     refreshToken: null,
   })
@@ -164,7 +164,7 @@ export async function forgotPasswordHandler(req: Request, res: Response) {
 
     if (!user) {
       logger.warn(`AUTH: Password reset request for unknown user ${req.body.email}`)
-      return res.status(404).send({ message: 'User not found' })
+      return res.status(404).json({ message: 'User not found' })
     }
 
     const passwordResetRecord = await createOrUpdatePasswordResetRecord(user.id)
@@ -179,7 +179,7 @@ export async function forgotPasswordHandler(req: Request, res: Response) {
     return res.sendStatus(200)
   } catch (error: any) {
     logger.error(`AUTH: Error sending forgot password email: ${error.message}`)
-    return res.status(500).send({ message: error.message })
+    return res.status(500).json({ message: error.message })
   }
 }
 
@@ -203,10 +203,10 @@ export async function resetPasswordHandler(req: Request, res: Response) {
     }
 
     logger.info(`AUTH: Password reset success for user ${user.id}`)
-    res.status(200).send()
+    res.status(200).json()
   } catch (error: any) {
     logger.error(`AUTH: Error resetting password: ${error.message}`)
-    return res.status(500).send({ message: error.message })
+    return res.status(500).json({ message: error.message })
   }
 }
 
@@ -223,10 +223,10 @@ export async function changeUserRoleHandler(req: Request, res: Response) {
     })
 
     logger.info(`AUTH: User role changed for user ${user.id}`)
-    return res.send(user)
+    return res.json(user)
   } catch (error: any) {
     logger.error(`AUTH: Error changing user role: ${error.message}`)
-    return res.status(500).send({ message: error.message })
+    return res.status(500).json({ message: error.message })
   }
 }
 
@@ -250,10 +250,10 @@ export async function changeEmailHandler(req: Request, res: Response) {
     })
 
     logger.info(`AUTH: User email change requested for user ${user.id}`)
-    return res.send(user)
+    return res.json(user)
   } catch (error: any) {
     logger.error(`AUTH: Error accepting user email change request for user: ${error.message}`)
-    return res.status(500).send({ message: error.message })
+    return res.status(500).json({ message: error.message })
   }
 }
 
@@ -275,9 +275,9 @@ export async function confirmEmailChangeHandler(req: Request, res: Response) {
     })
 
     logger.info(`AUTH: User email change confirmed for user ${user?.id}`)
-    return res.status(200).send()
+    return res.status(200).json()
   } catch (error: any) {
     logger.error(`AUTH: Error confirming email change for user: ${error.message}`)
-    return res.status(500).send({ message: error.message })
+    return res.status(500).json({ message: error.message })
   }
 }

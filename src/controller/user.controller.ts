@@ -10,9 +10,9 @@ export async function updateUserHandler(req: Request, res: Response) {
     })
 
     logger.info(`USER: User updated: ${user.id}`)
-    return res.send(user)
+    return res.json(user)
   } catch (e: any) {
     logger.error(`USER: Error updating user: ${e.message}`)
-    return res.status(400).send({ message: e.message })
+    return res.status(400).json({ message: e.message })
   }
 }
