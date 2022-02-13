@@ -35,10 +35,16 @@ export const s3 = new S3({
   secretAccessKey,
 })
 
-export function makeFileName(originalFileName: string, folder = '') {
+export function makeFileName(originalFileName: string, folder = '', subfolder = '') {
   const ext = originalFileName.split('.').slice(-1)
   const generatedName = `${dayjs().format('YYYYMMDD_HHmmss')}_${randomId()}.${ext}`
-  return folder ? `${folder}/${generatedName}` : `${generatedName}`
+  if (folder && subfolder) {
+    return `${folder}/${subfolder}/${generatedName}`
+  }
+  if (folder) {
+    return `${folder}/${generatedName}`
+  }
+  return `${generatedName}`
 }
 
 // upload a file

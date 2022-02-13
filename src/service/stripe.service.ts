@@ -1,5 +1,7 @@
 import logger from '../utils/logger'
 
+const logDomain = 'WEBHOOK_STRIPE'
+
 export async function handleStripeEvent(event: any) {
   switch (event.type) {
     case 'checkout.session.completed':
@@ -16,6 +18,6 @@ export async function handleStripeEvent(event: any) {
       break
     // ... handle other event types
     default:
-      logger.warn(`WEBHOOK: Unhandled event type ${event.type}`)
+      logger.warn(`${logDomain}: Unhandled event type ${event.type}`)
   }
 }

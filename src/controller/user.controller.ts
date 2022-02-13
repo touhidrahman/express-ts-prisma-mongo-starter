@@ -2,6 +2,8 @@ import { Request, Response } from 'express'
 import logger from '../utils/logger'
 import prisma from '../utils/prisma'
 
+const logDomain = 'USER'
+
 export async function updateUserHandler(req: Request, res: Response) {
   try {
     const user = await prisma.user.update({
@@ -12,7 +14,7 @@ export async function updateUserHandler(req: Request, res: Response) {
     logger.info(`USER: User updated: ${user.id}`)
     return res.json(user)
   } catch (e: any) {
-    logger.error(`USER: Error updating user: ${e.message}`)
+    logger.error(`${logDomain}: Error updating user: ${e.message}`)
     return res.status(400).json({ message: e.message })
   }
 }

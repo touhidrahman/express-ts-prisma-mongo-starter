@@ -18,6 +18,8 @@ import { createUser, validatePassword } from '../service/user.service'
 import logger from '../utils/logger'
 import prisma from '../utils/prisma'
 
+const logDomain = 'AUTH'
+
 export async function registerHandler(req: Request<{}, {}, SignupInput>, res: Response) {
   try {
     const user = await createUser(req.body)
@@ -29,10 +31,10 @@ export async function registerHandler(req: Request<{}, {}, SignupInput>, res: Re
       name: `${user.firstName} ${user.lastName}`,
     })
 
-    logger.info(`AUTH: User created: ${user.id}`)
+    logger.info(`${logDomain}: User created: ${user.id}`)
     return res.json(user)
   } catch (e: any) {
-    logger.error(`AUTH: Error creating user: ${e.message}`)
+    logger.error(`${logDomain}: Error creating user: ${e.message}`)
     return res.status(409).json({ message: e.message })
   }
 }
@@ -41,10 +43,10 @@ export async function createAdminUser(req: Request<{}, {}, SignupInput>, res: Re
   try {
     const user = await createUser({ ...req.body, role: 'ADMIN' })
 
-    logger.info(`AUTH: Admin created : ${user.id}`)
+    logger.info(`${logDomain}: Admin created : ${user.id}`)
     return res.json(user)
   } catch (e: any) {
-    logger.error(`AUTH: Error creating admin: ${e.message}`)
+    logger.error(`${logDomain}: Error creating admin: ${e.message}`)
     return res.status(409).json({ message: e.message })
   }
 }
@@ -53,16 +55,16 @@ export async function createFirstAdmin(req: Request<{}, {}, SignupInput>, res: R
   try {
     const userExists = await prisma.user.findFirst({ where: { role: 'ADMIN' } })
     if (userExists) {
-      logger.warn(`AUTH: Admin already exists`)
+      logger.warn(`${logDomain}: Admin already exists`)
       throw new Error('Admin user already exists')
     }
 
     const user = await createUser({ ...req.body, role: 'ADMIN' })
 
-    logger.info(`AUTH: First Admin created : ${user.id}`)
+    logger.info(`${logDomain}: First Admin created : ${user.id}`)
     return res.json(user)
   } catch (e: any) {
-    logger.error(`AUTH: Error creating first admin: ${e.message}`)
+    logger.error(`${logDomain}: Error creating first admin: ${e.message}`)
     return res.status(409).json({ message: e.message })
   }
 }
@@ -78,10 +80,10 @@ export async function verifyEmailHandler(req: Request, res: Response) {
       },
     })
 
-    logger.info(`AUTH: Email verification success for user ${user.id}`)
+    logger.info(`${logDomain}: Email verification success for user ${user.id}`)
     res.status(200).json()
   } catch (e: any) {
-    logger.error(`AUTH: Error email verification for user: ${e.message}`)
+    logger.error(`${logDomain}: Error email verification for user: ${e.message}`)
     return res.status(500).json({ message: e.message })
   }
 }
@@ -97,10 +99,10 @@ export async function resendVerficiationHandler(req: Request, res: Response) {
       name: `${user.firstName} ${user.lastName}`,
     })
 
-    logger.info(`AUTH: Email verification resent for user: ${user.id}`)
+    logger.info(`${logDomain}: Email verification resent for user: ${user.id}`)
     return res.json(user)
   } catch (e: any) {
-    logger.error(`AUTH: Error resending email verification for user: ${e.message}`)
+    logger.error(`${logDomain}: Error resending email verification for user: ${e.message}`)
     return res.status(500).json({ message: e.message })
   }
 }
@@ -109,7 +111,7 @@ export async function loginHandler(req: Request, res: Response) {
   const user = await validatePassword(req.body)
 
   if (!user) {
-    logger.warn(`AUTH: Invalid login attempt: ${req.body.email}`)
+    logger.warn(`${logDomain}: Invalid login attempt: ${req.body.email}`)
     return res.status(401).json({message: 'Invalid email or password'})
   }
 
@@ -123,7 +125,7 @@ export async function loginHandler(req: Request, res: Response) {
   const accessToken = createAccessToken(user, session.id)
   const refreshToken = createRefreshToken(user, session.id)
 
-  logger.info(`AUTH: Login success for user ${user.id}`)
+  logger.info(`${logDomain}: Login success for user ${user.id}`)
   return res.json({ accessToken, refreshToken })
 }
 
@@ -134,7 +136,7 @@ export async function getUserSessionsHandler(req: Request, res: Response) {
     where: { userId, valid: true },
   })
 
-  logger.info(`AUTH: User sessions retrieved ${userId}`)
+  logger.info(`${logDomain}: User sessions retrieved ${userId}`)
   return res.json(sessions)
 }
 
@@ -146,7 +148,7 @@ export async function logoutHandler(req: Request, res: Response) {
     data: { valid: false },
   })
 
-  logger.info(`AUTH: Logout success ${res.locals.user.id}`)
+  logger.info(`${logDomain}: Logout success ${res.locals.user.id}`)
 
   return res.json({
     accessToken: null,
@@ -163,7 +165,7 @@ export async function forgotPasswordHandler(req: Request, res: Response) {
     })
 
     if (!user) {
-      logger.warn(`AUTH: Password reset request for unknown user ${req.body.email}`)
+      logger.warn(`${logDomain}: Password reset request for unknown user ${req.body.email}`)
       return res.status(404).json({ message: 'User not found' })
     }
 
@@ -175,10 +177,10 @@ export async function forgotPasswordHandler(req: Request, res: Response) {
       name: user.firstName + ' ' + user.lastName,
     })
 
-    logger.info(`AUTH: Password reset email sent for user ${user.id}`)
+    logger.info(`${logDomain}: Password reset email sent for user ${user.id}`)
     return res.sendStatus(200)
   } catch (error: any) {
-    logger.error(`AUTH: Error sending forgot password email: ${error.message}`)
+    logger.error(`${logDomain}: Error sending forgot password email: ${error.message}`)
     return res.status(500).json({ message: error.message })
   }
 }
@@ -202,10 +204,10 @@ export async function resetPasswordHandler(req: Request, res: Response) {
       })
     }
 
-    logger.info(`AUTH: Password reset success for user ${user.id}`)
+    logger.info(`${logDomain}: Password reset success for user ${user.id}`)
     res.status(200).json()
   } catch (error: any) {
-    logger.error(`AUTH: Error resetting password: ${error.message}`)
+    logger.error(`${logDomain}: Error resetting password: ${error.message}`)
     return res.status(500).json({ message: error.message })
   }
 }
@@ -222,10 +224,10 @@ export async function changeUserRoleHandler(req: Request, res: Response) {
       },
     })
 
-    logger.info(`AUTH: User role changed for user ${user.id}`)
+    logger.info(`${logDomain}: User role changed for user ${user.id}`)
     return res.json(user)
   } catch (error: any) {
-    logger.error(`AUTH: Error changing user role: ${error.message}`)
+    logger.error(`${logDomain}: Error changing user role: ${error.message}`)
     return res.status(500).json({ message: error.message })
   }
 }
@@ -249,10 +251,10 @@ export async function changeEmailHandler(req: Request, res: Response) {
       userId: user.id,
     })
 
-    logger.info(`AUTH: User email change requested for user ${user.id}`)
+    logger.info(`${logDomain}: User email change requested for user ${user.id}`)
     return res.json(user)
   } catch (error: any) {
-    logger.error(`AUTH: Error accepting user email change request for user: ${error.message}`)
+    logger.error(`${logDomain}: Error accepting user email change request for user: ${error.message}`)
     return res.status(500).json({ message: error.message })
   }
 }
@@ -274,10 +276,10 @@ export async function confirmEmailChangeHandler(req: Request, res: Response) {
       data: { email: record?.newEmail, emailVerified: true },
     })
 
-    logger.info(`AUTH: User email change confirmed for user ${user?.id}`)
+    logger.info(`${logDomain}: User email change confirmed for user ${user?.id}`)
     return res.status(200).json()
   } catch (error: any) {
-    logger.error(`AUTH: Error confirming email change for user: ${error.message}`)
+    logger.error(`${logDomain}: Error confirming email change for user: ${error.message}`)
     return res.status(500).json({ message: error.message })
   }
 }

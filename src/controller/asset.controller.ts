@@ -4,6 +4,8 @@ import util from 'util'
 import { deleteS3Object, downloadS3Object, MulterUploadedFile, uploadS3Object } from '../service/s3.service'
 import logger from '../utils/logger'
 import prisma from '../utils/prisma'
+
+const logDomain = 'ASSET'
 const unlinkFile = util.promisify(fs.unlink)
 
 /**
@@ -34,10 +36,10 @@ export async function uploadAssetHandler(req: Request, res: Response) {
 
     await unlinkFile(file.path)
 
-    logger.info(`ASSET: Uploaded ${file.mimetype} to ${result.Location}`)
+    logger.info(`${logDomain}: Uploaded ${file.mimetype} to ${result.Location}`)
     return res.json(record)
   } catch (error: any) {
-    logger.warn(`ASSET: ${error.message}`)
+    logger.error(`${logDomain}: ${error.message}`)
     res.status(500).json({ message: error.message })
   }
 }
@@ -61,7 +63,7 @@ export async function uploadMultipleAssetHandler(req: Request, res: Response) {
 
     return res.json(data)
   } catch (error: any) {
-    logger.warn(`ASSET: ${error.message}`)
+    logger.error(`${logDomain}: ${error.message}`)
     res.status(500).json({ message: error.message })
   }
 }
@@ -75,9 +77,9 @@ export async function getAssetHandler(req: Request, res: Response) {
     res.send(fileObj.Body)
     res.end()
 
-    logger.info(`ASSET: Get ${key}`)
+    logger.info(`${logDomain}: Get ${key}`)
   } catch (error: any) {
-    logger.warn(`ASSET: ${error.message}`)
+    logger.error(`${logDomain}: ${error.message}`)
     res.status(500).json({ message: error.message })
   }
 }
@@ -91,9 +93,9 @@ export async function downloadAssetHandler(req: Request, res: Response) {
     res.setHeader('Content-Type', downloadedFile.ContentType ?? '')
     res.send(downloadedFile.Body)
     res.end()
-    logger.info(`ASSET: Download ${key}`)
+    logger.info(`${logDomain}: Download ${key}`)
   } catch (error: any) {
-    logger.warn(`ASSET: ${error.message}`)
+    logger.error(`${logDomain}: ${error.message}`)
     res.status(500).json({ message: error.message })
   }
 }
@@ -109,11 +111,11 @@ export async function deleteAssetHandler(req: Request, res: Response) {
       where: { name: key },
     })
 
-    logger.info(`ASSET: Deleted ${key}`)
-    logger.info(`ASSET: Deleted ${removeRecord.count} records`)
+    logger.info(`${logDomain}: Deleted ${key}`)
+    logger.info(`${logDomain}: Deleted ${removeRecord.count} records`)
     res.sendStatus(200)
   } catch (error: any) {
-    logger.warn(`ASSET: ${error.message}`)
+    logger.error(`${logDomain}: ${error.message}`)
     res.status(500).json({ message: error.message })
   }
 }

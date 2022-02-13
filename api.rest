@@ -5,7 +5,7 @@
 
 
 
-POST {{host}}/auth/register
+POST {{host}}/register
 Content-Type: application/json
 
 {
@@ -19,7 +19,7 @@ Content-Type: application/json
 ###
 
 
-POST {{host}}/auth/create-admin
+POST {{host}}/create-admin
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -33,7 +33,7 @@ Authorization: Bearer {{accessToken}}
 
 ### LOGIN
 
-POST {{host}}/auth/login
+POST {{host}}/login
 Content-Type: application/json
 
 {
@@ -43,7 +43,7 @@ Content-Type: application/json
 
 ###
 
-POST {{host}}/auth/forgot-password
+POST {{host}}/forgot-password
 Content-Type: application/json
 
 {
@@ -52,7 +52,7 @@ Content-Type: application/json
 
 ###
 
-POST {{host}}/auth/reset-password/r1wm2vbeax239csn7roepf2seq9e636q87uoy1zk
+POST {{host}}/reset-password/r1wm2vbeax239csn7roepf2seq9e636q87uoy1zk
 Content-Type: application/json
 
 {
@@ -62,7 +62,7 @@ Content-Type: application/json
 
 ###
 
-POST {{host}}/auth/change-password
+POST {{host}}/change-password
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -73,13 +73,13 @@ Authorization: Bearer {{accessToken}}
 
 ###
 
-POST {{host}}/auth/change-email/60f335bf00b32ef000bd9a94/confirm/kpzsaaq2l28o1y8b5zdzjb85i6acve1z1pa702z5
+POST {{host}}/change-email/60f335bf00b32ef000bd9a94/confirm/kpzsaaq2l28o1y8b5zdzjb85i6acve1z1pa702z5
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ###
 
-POST {{host}}/auth/change-email/60f335bf00b32ef000bd9a94
+POST {{host}}/change-email/60f335bf00b32ef000bd9a94
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
