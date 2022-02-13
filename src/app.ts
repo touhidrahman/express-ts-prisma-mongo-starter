@@ -5,6 +5,7 @@ dotenv.config()
 
 import config from 'config'
 import helmet from 'helmet'
+import cors from 'cors'
 
 import logger from './utils/logger'
 import routes from './routes'
@@ -22,6 +23,7 @@ const app = express()
 app.post('/webhooks', express.raw({ type: 'application/json' }), webhooksHandler)
 
 app.use(express.json())
+app.use(cors())
 app.use(httpLogger)
 app.use(helmet())
 app.use(rateLimiter)
