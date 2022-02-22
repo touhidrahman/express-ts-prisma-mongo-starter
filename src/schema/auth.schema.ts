@@ -18,7 +18,7 @@ export const forgotPasswordSchema = z.object({
   }),
 })
 
-const passwordRegex = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$/ // 1 caps, 1 small, 1 number, 1 special
+const passwordRegex = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{6,})/) // 1 caps, 1 small, 1 number, 1 special
 
 export const resetPasswordSchema = z.object({
   body: z
@@ -43,7 +43,7 @@ export const registerSchema = object({
     password: string({
       required_error: 'Name is required',
     })
-      .min(6, 'Password too short - should be 6 chars minimum')
+      .min(6, 'Password should be minimum 6 chars, including 1 small letter, 1 capital letter, 1 number and 1 special character')
       .max(30)
       .regex(passwordRegex),
     passwordConfirmation: string({

@@ -19,7 +19,7 @@ function routes(app: Express) {
   app.post('/v1/reset-password/:token', checkToken('PasswordReset'), validate(resetPasswordSchema), auth.resetPasswordHandler)
   app.post('/v1/change-password', requireUser, validate(resetPasswordSchema), auth.resetPasswordHandler)
   app.post('/v1/resend-verification', requireUser, auth.resendVerficiationHandler)
-  app.post('/v1/verify-email/:token', checkToken('EmailVerification'), auth.resendVerficiationHandler)
+  app.post('/v1/verify-email/:token', checkToken('EmailVerification'), auth.verifyEmailHandler)
   app.post('/v1/change-user-role/:id', requireAdmin, auth.changeUserRoleHandler)
   app.post('/v1/change-email/:id', requireUser, validate(forgotPasswordSchema), auth.changeEmailHandler)
   app.post('/v1/change-email/:id/confirm/:token', checkToken('EmailChange'), auth.confirmEmailChangeHandler)

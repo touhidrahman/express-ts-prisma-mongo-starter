@@ -1,6 +1,11 @@
 import { Request, Response, NextFunction } from 'express'
 import prisma from '../utils/prisma'
 
+/**
+ * Checks a given token from route param and sets the user (if valid and exists) to req.local.user
+ * @param type
+ * @returns
+ */
 export const checkToken = (type: 'EmailChange' | 'EmailVerification' | 'PasswordReset') => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
