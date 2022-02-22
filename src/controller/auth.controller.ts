@@ -178,7 +178,7 @@ export async function forgotPasswordHandler(req: Request, res: Response) {
     })
 
     logger.info(`${logDomain}: Password reset email sent for user ${user.id}`)
-    return res.sendStatus(200)
+    return res.status(200).json({ message: 'Password reset email sent' })
   } catch (error: any) {
     logger.error(`${logDomain}: Error sending forgot password email: ${error.message}`)
     return res.status(500).json({ message: error.message })
@@ -205,7 +205,7 @@ export async function resetPasswordHandler(req: Request, res: Response) {
     }
 
     logger.info(`${logDomain}: Password reset success for user ${user.id}`)
-    res.status(200).json()
+    res.status(200).json({ message: 'Password reset success' })
   } catch (error: any) {
     logger.error(`${logDomain}: Error resetting password: ${error.message}`)
     return res.status(500).json({ message: error.message })
