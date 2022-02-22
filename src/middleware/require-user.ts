@@ -5,7 +5,7 @@ export const requireUser = (req: Request, res: Response, next: NextFunction) => 
   const user = res.locals.user
 
   if (!user) {
-    logger.warn(`AUTH: Forbidden access attempted. path: ${req.path}, user: ${user?.id}`)
+    logger.warn(`AUTH: Forbidden access attempted. path: ${req.path}`)
     return res.status(403).json({ message: 'User does not have access' })
   }
 
