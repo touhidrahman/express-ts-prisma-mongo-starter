@@ -53,8 +53,12 @@ model User {
   emailChange       EmailChange?
   emailVerification EmailVerification?
   passwordReset     PasswordReset?
-  posts             Post[]
+  docs              Doc[]
   sessions          Session[]
+  authors           Author[]
+  tags              Tag[]
+  bookmarks         Bookmark[]
+  notes             Note[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -73,27 +77,91 @@ model Session {
 }
 
 model Asset {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  url       String
-  size      Int
-  mimetype  String
-  bucket    String?
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  url      String
+  size     Int
+  mimetype String
+  bucket   String?
+  docId    String? @db.ObjectId
+
+  doc Doc? @relation(fields: [docId], references: [id])
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-// Models for your application
+model Doc {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String?
+  publishedOn DateTime?
+  rating      Int       @default(0)
+  readPage    Int       @default(0)
+  totalPages  Int?
+  authorId    String?   @db.ObjectId
+  userId      String?   @db.ObjectId
 
-model Post {
-  id        String  @id @default(auto()) @map("_id") @db.ObjectId
-  title     String
-  content   String?
-  published Boolean @default(false)
-  viewCount Int     @default(0)
-  authorId  String?
+  author    Author?    @relation(fields: [authorId], references: [id])
+  user      User?      @relation(fields: [userId], references: [id])
+  assets    Asset[]
+  tags      Tag[]
+  bookmarks Bookmark[]
+  notes     Note[]
 
-  author User? @relation(fields: [authorId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Author {
+  id     String  @id @default(auto()) @map("_id") @db.ObjectId
+  name   String
+  image  String?
+  userId String? @db.ObjectId
+
+  user User? @relation(fields: [userId], references: [id])
+  docs Doc[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Tag {
+  id     String  @id @default(auto()) @map("_id") @db.ObjectId
+  name   String
+  image  String?
+  userId String? @db.ObjectId
+  docId  String? @db.ObjectId
+
+  user User? @relation(fields: [userId], references: [id])
+  doc  Doc?  @relation(fields: [docId], references: [id])
+}
+
+model Bookmark {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String @db.ObjectId
+  docId       String @db.ObjectId
+  name        String
+  page        Int
+  pagePostion Int    @default(0)
+
+  user User? @relation(fields: [userId], references: [id])
+  doc  Doc?  @relation(fields: [docId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Note {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String @db.ObjectId
+  docId       String @db.ObjectId
+  content     String
+  page        Int
+  pagePostion Int    @default(0)
+
+  user User? @relation(fields: [userId], references: [id])
+  doc  Doc?  @relation(fields: [docId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

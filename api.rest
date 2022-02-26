@@ -1,15 +1,15 @@
 @host=http://localhost:3000/v1
-@accessToken=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyMDcwYTZjOTliNjk1NGYyOTIwMjZlYSIsImVtYWlsIjoiYTRAYi5jb20iLCJmaXJzdE5hbWUiOiJBIiwibGFzdE5hbWUiOiJCIiwiaW1hZ2UiOm51bGwsImJpcnRoRGF0ZSI6bnVsbCwicm9sZSI6IlVTRVIiLCJlbWFpbFZlcmlmaWVkIjpmYWxzZSwiY3JlYXRlZEF0IjoiMjAyMi0wMi0xMlQwMToxNjoyOC45ODVaIiwidXBkYXRlZEF0IjoiMjAyMi0wMi0xMlQwMToxNjoyOC45ODVaIiwic2Vzc2lvbiI6IjYyMDgxNjM0ZDRmN2M3ZGVlMTZlMzFlNiIsImlhdCI6MTY0NDY5NzE0MCwiZXhwIjoxNjQ1MzAxOTQwfQ.XDr4YuwNaLagjdnFuj2vZKeTFKz9_222TgrpYwiMk2ofLgDMLF0AS6jCC3VdTBNoSwK7DMDtHwcqLRNcp1lS4mIkKrepG5bwgxD6_nS0jJsrFg9wlDaKuDGlbj1qX_cC5qf5vNYZKfjlBe8k-adRQvp1JDtw7zpbiqsJRajGxdI
+@accessToken=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyMWE1Zjc4MmI1YmQ0NDg0ZjYwZmM5YSIsImVtYWlsIjoiYTFAYi5jb20iLCJmaXJzdE5hbWUiOiJBIiwibGFzdE5hbWUiOiJCIiwiaW1hZ2UiOm51bGwsImJpcnRoRGF0ZSI6bnVsbCwicm9sZSI6IlVTRVIiLCJlbWFpbFZlcmlmaWVkIjpmYWxzZSwiY3JlYXRlZEF0IjoiMjAyMi0wMi0yNlQxNzoxMjoyNC40NDZaIiwidXBkYXRlZEF0IjoiMjAyMi0wMi0yNlQxNzoxMjoyNC40NDZaIiwic2Vzc2lvbiI6IjYyMWE1ZmIxMmI1YmQ0NDg0ZjYwZmM5YyIsImlhdCI6MTY0NTg5NTYwMSwiZXhwIjoxNjQ2NTAwNDAxfQ.H9ISPEWcKfLInbTEqTD2kHmULxN8sQNm1t1FNbh-I5ULgiywCzucw7Nk2UubYgQNCqxUEtIGpGAvNC8Ob_GcqreFPx0zFv3FgrWou9ttAZb-2EeIos1pvF3YY3iy6-NnwpPwX4X3N7JqfcyR7FhB5Pv5qhPouX2pTBzMqZXm--Q
 
-@refreshToken=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyMDcwYTZjOTliNjk1NGYyOTIwMjZlYSIsImVtYWlsIjoiYTRAYi5jb20iLCJmaXJzdE5hbWUiOiJBIiwibGFzdE5hbWUiOiJCIiwiaW1hZ2UiOm51bGwsImJpcnRoRGF0ZSI6bnVsbCwicm9sZSI6IlVTRVIiLCJlbWFpbFZlcmlmaWVkIjpmYWxzZSwiY3JlYXRlZEF0IjoiMjAyMi0wMi0xMlQwMToxNjoyOC45ODVaIiwidXBkYXRlZEF0IjoiMjAyMi0wMi0xMlQwMToxNjoyOC45ODVaIiwic2Vzc2lvbiI6IjYyMDgxNjM0ZDRmN2M3ZGVlMTZlMzFlNiIsImlhdCI6MTY0NDY5NzE0MCwiZXhwIjoxNjc2MjU0NzQwfQ.M5gHWRjmuaDdmlDGnz14MSeTRfYlL4xL8bFxR4EKZWPshYMaEMql0Qlae2fTNxa6ryViqsYBayud63H--1DzFk5zJ7gyGHHdfm_YIIzFxJeBP9wBFZta5-kpDWMIRO3bBS4ZhsD9GtSXg2wUmgXgZopGPHh8h7NxA5k_T-Me7Rs
+@refreshToken=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyMWE1Zjc4MmI1YmQ0NDg0ZjYwZmM5YSIsImVtYWlsIjoiYTFAYi5jb20iLCJmaXJzdE5hbWUiOiJBIiwibGFzdE5hbWUiOiJCIiwiaW1hZ2UiOm51bGwsImJpcnRoRGF0ZSI6bnVsbCwicm9sZSI6IlVTRVIiLCJlbWFpbFZlcmlmaWVkIjpmYWxzZSwiY3JlYXRlZEF0IjoiMjAyMi0wMi0yNlQxNzoxMjoyNC40NDZaIiwidXBkYXRlZEF0IjoiMjAyMi0wMi0yNlQxNzoxMjoyNC40NDZaIiwic2Vzc2lvbiI6IjYyMWE1ZmIxMmI1YmQ0NDg0ZjYwZmM5YyIsImlhdCI6MTY0NTg5NTYwMSwiZXhwIjoxNjc3NDUzMjAxfQ.P9Qy-zZjKWdzuFr0sFeVm0fN33ez703bTB6dIuPklRC0Zll235d47y1yaRmtwKBrbr3aF2QNRZKVgt9qyTSjRsppIdON1S67Nz_DTop78qnPuRreMCyPXznkev0iaDVsdcjkvUnsqoH1ymQDU9t2zYkICvStEh_wtGdM9hye-0U
 
 
 
-POST {{host}}/register
+POST {{host}}/auth/register
 Content-Type: application/json
 
 {
-  "email": "a4@b.com",
+  "email": "a1@b.com",
     "password": "Abcd1234!",
     "passwordConfirmation": "Abcd1234!",
     "firstName": "A",
@@ -18,13 +18,14 @@ Content-Type: application/json
 
 ###
 
+###
 
 POST {{host}}/create-admin
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "email": "a6@b.com",
+  "email": "a1@b.com",
     "password": "Abcd1234!",
     "passwordConfirmation": "Abcd1234!",
     "firstName": "A",
@@ -33,11 +34,11 @@ Authorization: Bearer {{accessToken}}
 
 ### LOGIN
 
-POST {{host}}/login
+POST {{host}}/auth/login
 Content-Type: application/json
 
 {
-  "email": "a4@b.com",
+  "email": "a1@b.com",
     "password": "Abcd1234!"
 }
 
@@ -85,4 +86,19 @@ Authorization: Bearer {{accessToken}}
 
 {
   "email": "a1@b.com"
+}
+
+###
+
+POST {{host}}/add-doc
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "title": "A2",
+  "description": "Lorem ipsum dolor sit amet",
+  "publishedOn": "2022-02-01",
+  "rating": 4,
+  "authorName": "Don Bravo",
+  "tags": "tag1, tag2"
 }
