@@ -4,11 +4,8 @@ import multerS3 from 'multer-s3'
 
 export const uploadLocal = multer({ dest: 'uploads/' })
 
-export const uploadS3Folder = function (folder: string) {
+export const uploadS3Folder = function (folder: string, filename = '') {
   return multer({
-    limits: {
-      fileSize: 10 * 1024 * 1024,
-    },
     storage: multerS3({
       s3,
       bucket,
@@ -26,9 +23,6 @@ export const uploadS3Folder = function (folder: string) {
 }
 
 export const uploadS3 = multer({
-  limits: {
-    fileSize: 10 * 1024 * 1024,
-  },
   storage: multerS3({
     s3,
     bucket,
@@ -38,7 +32,6 @@ export const uploadS3 = multer({
       cb(null, { fieldName: file.fieldname })
     },
     key: function (req, file, cb) {
-      console.log('TCL: | req', (req as any).query)
       cb(null, makeFileName(file.originalname))
     },
     acl: 'public-read',

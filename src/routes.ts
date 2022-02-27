@@ -37,12 +37,11 @@ function routes(app: Express) {
   app.delete('/v1/assets/:key', requireUser, asset.deleteAssetHandler)
   app.get('/v1/download/:key', requireUser, asset.downloadAssetHandler)
 
-  app.get('/v1/docs', doc.getAllHandler)
-  app.get('/v1/docs/:key', doc.getOneHandler)
-  app.post('/v1/add-doc', uploadLocal.single('file'), doc.addHandler)
-  // app.post('/v1/add-doc', requireUser, uploadLocal.single('file'), doc.addHandler)
-  app.patch('/v1/docs/:key', requireUser, doc.updateHandler)
-  app.delete('/v1/docs/:key', requireUser, doc.deleteHandler)
+  app.get('/v1/docs', requireUser, doc.getAllHandler)
+  app.get('/v1/docs/:id', requireUser, doc.getOneHandler)
+  app.post('/v1/add-doc', requireUser, uploadLocal.single('file'), doc.addHandler)
+  app.patch('/v1/docs/:id', requireUser, doc.updateHandler)
+  app.delete('/v1/docs/:id', requireUser, doc.deleteHandler)
 }
 
 export default routes

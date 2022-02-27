@@ -14,6 +14,12 @@ enum UserRole {
   USER
 }
 
+enum Plan {
+  BASIC
+  PRO
+  PREMIUM
+}
+
 model EmailChange {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
   token      String   @default(uuid())
@@ -46,6 +52,9 @@ model User {
   firstName     String
   lastName      String
   image         String?
+  quota         Int       @default(1000000000) // 1GB
+  usedSpace     Int       @default(0)
+  plan          Plan      @default(BASIC)
   birthDate     DateTime? @db.Date
   role          UserRole  @default(USER)
   emailVerified Boolean   @default(false)
@@ -59,6 +68,7 @@ model User {
   tags              Tag[]
   bookmarks         Bookmark[]
   notes             Note[]
+  assets            Asset[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -84,8 +94,10 @@ model Asset {
   mimetype String
   bucket   String?
   docId    String? @db.ObjectId
+  userId   String? @db.ObjectId
 
-  doc Doc? @relation(fields: [docId], references: [id])
+  doc  Doc?  @relation(fields: [docId], references: [id])
+  user User? @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

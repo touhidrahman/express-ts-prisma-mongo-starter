@@ -48,12 +48,12 @@ export function makeFileName(originalFileName: string, folder = '', subfolder = 
 }
 
 // upload a file
-export function uploadS3Object(file: Express.Multer.File, folder = '') {
+export function uploadS3Object(file: Express.Multer.File, folder = '', filename = '') {
   const fileStream = fs.createReadStream(file.path)
 
   const uploadParams: S3.PutObjectRequest = {
     Bucket: bucket ?? '',
-    Key: makeFileName(file.originalname, folder),
+    Key: folder && filename ? `${folder}/${filename}` : makeFileName(file.originalname, folder),
     Body: fileStream,
     ContentType: file.mimetype,
     ACL: 'public-read',
