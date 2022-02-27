@@ -16,12 +16,10 @@ const unlinkFile = util.promisify(fs.unlink)
 export async function getAllHandler(req: Request<{}, {}, {}, DocQueryParams>, res: Response) {
   try {
     const userId = res.locals.user.id
-    const { search = '', take = 24, skip = 0, orderBy = 'asc', authorId = '', rating = 0, tags = '' } = req.query
-    const searchTags = tags.split(',').map((tag) => tag.trim())
+    const { search = '', take = 24, skip = 0, orderBy = 'asc', authorId = '', rating = 0, tagId = '' } = req.query
 
     const results = await service.findMany({
       where: {
-        userId,
         ...(search
           ? {
               OR: [
@@ -31,6 +29,12 @@ export async function getAllHandler(req: Request<{}, {}, {}, DocQueryParams>, re
               ],
             }
           : {}),
+          AND: [
+            { userId },
+            authorId ? { authorId } : {},
+            tagId ? { tags: { some: { id: tagId } } } : {},
+            rating > 0 ? { rating: { gte: rating } } : {},
+          ]
       },
       include: { author: true, tags: true, assets: true },
       take: Number(take) || undefined,
@@ -40,7 +44,7 @@ export async function getAllHandler(req: Request<{}, {}, {}, DocQueryParams>, re
       },
     })
 
-    res.send(results)
+    res.json(results)
   } catch (error: any) {
     logger.error(`${logDomain}: ${error.message}`)
     res.status(500).send({ message: error.message })
@@ -62,7 +66,7 @@ export async function getOneHandler(req: Request<{ id: string }>, res: Response)
       },
     })
 
-    res.send(result)
+    res.json(result)
   } catch (error: any) {
     logger.error(`${logDomain}: ${error.message}`)
     res.status(500).send({ message: error.message })
@@ -249,7 +253,7 @@ export async function createHandler(req: Request<{}, {}, Prisma.DocCreateManyInp
       },
     })
 
-    res.send(result)
+    res.json(result)
   } catch (error: any) {
     logger.error(`${logDomain}: ${error.message}`)
     res.status(500).send({ message: error.message })
@@ -266,7 +270,7 @@ export async function updateHandler(req: Request<{ id: string }, {}, Prisma.DocC
       },
     })
 
-    res.send(result)
+    res.json(result)
   } catch (error: any) {
     logger.error(`${logDomain}: ${error.message}`)
     res.status(500).send({ message: error.message })

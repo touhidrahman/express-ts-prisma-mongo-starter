@@ -6,7 +6,7 @@ export interface CommonQueryParams {
 }
 
 export interface DocQueryParams extends CommonQueryParams {
-  tags?: string // CSV
+  tagId?: string
   authorId?: string
   rating?: number
 }
