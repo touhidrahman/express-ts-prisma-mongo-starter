@@ -117,7 +117,7 @@ export async function addHandler(req: Request<{}, {}, AddDocInput>, res: Respons
           name: uploadResult.Key,
           size: file.size,
           user: { connect: { id: userId } },
-        }
+        },
       },
       user: { connect: { id: userId } },
     }
@@ -128,19 +128,111 @@ export async function addHandler(req: Request<{}, {}, AddDocInput>, res: Respons
         assets: true,
         author: true,
         tags: { select: { name: true, id: true } },
-      }
+      },
     })
 
     await prisma.user.update({
       where: { id: userId },
       data: {
         usedSpace: { increment: file.size },
-      }
+      },
     })
 
     await unlinkFile(file.path)
 
     logger.info(`${logDomain}: Add-doc ${result.id}`)
+    res.json(result)
+  } catch (error: any) {
+    logger.error(`${logDomain}: ${error.message}`)
+    res.status(500).send({ message: error.message })
+  }
+}
+
+export async function addAssetHandler(req: Request<{ id: string }, {}, AddDocInput>, res: Response) {
+  try {
+    if (!req.file) throw new Error('No file provided')
+
+    const userId = res.locals.user.id
+    const userQuota = await prisma.user.findUnique({ where: { id: userId }, select: { quota: true, usedSpace: true } })
+    const file: Express.Multer.File = req.file
+
+    if (userQuota && userQuota.usedSpace + file.size > userQuota.quota) {
+      throw new Error('Quota exceeded')
+    }
+
+    const data = req.body
+    const uploadResult = await uploadS3Object(file, userId, `${data.title}_${data.authorName}`)
+
+    if (!uploadResult) throw new Error('Upload failed')
+
+    logger.info(`${logDomain}: Uploaded ${file.mimetype} to ${uploadResult.Location}`)
+
+    const result = await service.update({
+      where: { id: req.params.id },
+      data: {
+        assets: {
+          create: {
+            url: uploadResult.Location,
+            bucket: uploadResult.Bucket,
+            mimetype: file.mimetype,
+            name: uploadResult.Key,
+            size: file.size,
+            user: { connect: { id: userId } },
+          },
+        },
+      },
+      include: {
+        assets: true,
+        author: true,
+        tags: { select: { name: true, id: true } },
+      },
+    })
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        usedSpace: { increment: file.size },
+      },
+    })
+
+    await unlinkFile(file.path)
+
+    logger.info(`${logDomain}: Added asset to doc: ${result.id}`)
+    res.json(result)
+  } catch (error: any) {
+    logger.error(`${logDomain}: ${error.message}`)
+    res.status(500).send({ message: error.message })
+  }
+}
+
+export async function deleteAssetHandler(req: Request<{ id: string, assetId: string }, {}, AddDocInput>, res: Response) {
+  try {
+    const userId = res.locals.user.id
+    const assetId = req.params.assetId
+    const deletedAssetSize = await prisma.asset.findUnique({ where: { id: assetId }, select: { size: true } })
+
+    const result = await service.update({
+      where: { id: req.params.id },
+      data: {
+        assets: {
+          deleteMany: [{ id: assetId }],
+        },
+      },
+      include: {
+        assets: true,
+        author: true,
+        tags: { select: { name: true, id: true } },
+      },
+    })
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        usedSpace: { decrement: deletedAssetSize?.size },
+      },
+    })
+
+    logger.info(`${logDomain}: Deleted asset ${assetId} from doc: ${result.id}`)
     res.json(result)
   } catch (error: any) {
     logger.error(`${logDomain}: ${error.message}`)
@@ -183,11 +275,22 @@ export async function updateHandler(req: Request<{ id: string }, {}, Prisma.DocC
 
 export async function deleteHandler(req: Request<{ id: string }, {}>, res: Response) {
   try {
-    const result = await service.delete({
+    const assetResult = await prisma.asset.findMany({ where: { docId: req.params.id }, select: { size: true } })
+    const freedSpace = assetResult.reduce((acc, cur) => acc + cur.size, 0)
+
+    const spaceUpdate = prisma.user.update({
+      where: { id: res.locals.user.id },
+      data: {
+        usedSpace: { decrement: freedSpace },
+      },
+    })
+    const assetDelete = prisma.asset.deleteMany({ where: { docId: req.params.id } })
+    const docDelete = service.delete({
       where: { id: req.params.id },
     })
+    await prisma.$transaction([spaceUpdate, assetDelete, docDelete])
 
-    res.send(result)
+    res.status(204).send()
   } catch (error: any) {
     logger.error(`${logDomain}: ${error.message}`)
     res.status(500).send({ message: error.message })

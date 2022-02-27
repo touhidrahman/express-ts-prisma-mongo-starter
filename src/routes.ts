@@ -40,6 +40,8 @@ function routes(app: Express) {
   app.get('/v1/docs', requireUser, doc.getAllHandler)
   app.get('/v1/docs/:id', requireUser, doc.getOneHandler)
   app.post('/v1/add-doc', requireUser, uploadLocal.single('file'), doc.addHandler)
+  app.post('/v1/docs/:id/assets', requireUser, uploadLocal.single('file'), doc.addAssetHandler)
+  app.delete('/v1/docs/:id/assets/:assetId', requireUser, doc.deleteAssetHandler)
   app.patch('/v1/docs/:id', requireUser, doc.updateHandler)
   app.delete('/v1/docs/:id', requireUser, doc.deleteHandler)
 }
