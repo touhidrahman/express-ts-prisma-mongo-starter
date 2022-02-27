@@ -3,6 +3,7 @@ import * as asset from './controller/asset.controller'
 import * as auth from './controller/auth.controller'
 import * as user from './controller/user.controller'
 import * as doc from './controller/doc.controller'
+import * as tag from './controller/tag.controller'
 import { checkToken } from './middleware/check-token'
 import { requireAdmin, requireUser } from './middleware/require-user'
 import { uploadLocal, uploadS3 } from './middleware/upload'
@@ -44,6 +45,11 @@ function routes(app: Express) {
   app.delete('/v1/docs/:id/assets/:assetId', requireUser, doc.deleteAssetHandler)
   app.patch('/v1/docs/:id', requireUser, doc.updateHandler)
   app.delete('/v1/docs/:id', requireUser, doc.deleteHandler)
+
+  app.get('/v1/tags', requireUser, tag.getAllHandler)
+  app.get('/v1/tags/:id', requireUser, tag.getOneHandler)
+  app.patch('/v1/tags/:id', requireUser, tag.updateHandler)
+  app.delete('/v1/tags/:id', requireUser, tag.deleteHandler)
 }
 
 export default routes

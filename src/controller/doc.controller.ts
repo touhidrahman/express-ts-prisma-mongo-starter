@@ -109,7 +109,7 @@ export async function addHandler(req: Request<{}, {}, AddDocInput>, res: Respons
         connect: foundTags.map((tag) => ({ id: tag.id })),
         createMany: notFoundTags.length
           ? {
-              data: notFoundTags.map((tagName) => ({ name: tagName, user: { connect: { id: userId } } })),
+              data: notFoundTags.map((tagName) => ({ name: tagName, userId })),
             }
           : undefined,
       },
