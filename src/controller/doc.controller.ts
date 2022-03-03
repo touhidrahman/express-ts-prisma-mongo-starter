@@ -13,6 +13,39 @@ const logDomain = 'DOC'
 const service = prisma.doc
 const unlinkFile = util.promisify(fs.unlink)
 
+export async function getCountHandler(req: Request<{}, {}, {}, DocQueryParams>, res: Response) {
+  try {
+    const userId = res.locals.user.id
+    const { search = '', authorId = '', rating = 0, tagId = '' } = req.query
+
+    const result = await service.count({
+      where: {
+        ...(search
+          ? {
+              OR: [
+                { title: { contains: search, mode: 'insensitive' } },
+                { tags: { some: { name: { contains: search, mode: 'insensitive' } } } },
+                { author: { name: { contains: search, mode: 'insensitive' } } },
+              ],
+            }
+          : {}),
+          AND: [
+            { userId },
+            authorId ? { authorId } : {},
+            tagId ? { tags: { some: { id: tagId } } } : {},
+            rating > 0 ? { rating: { gte: rating } } : {},
+          ]
+      },
+    })
+
+    res.json(result)
+  } catch (error: any) {
+    logger.error(`${logDomain}: ${error.message}`)
+    res.status(500).send({ message: error.message })
+  }
+
+}
+
 export async function getAllHandler(req: Request<{}, {}, {}, DocQueryParams>, res: Response) {
   try {
     const userId = res.locals.user.id

@@ -39,6 +39,7 @@ function routes(app: Express) {
   app.get('/v1/download/:key', requireUser, asset.downloadAssetHandler)
 
   app.get('/v1/docs', requireUser, doc.getAllHandler)
+  app.get('/v1/docs/count', requireUser, doc.getCountHandler)
   app.get('/v1/docs/:id', requireUser, doc.getOneHandler)
   app.post('/v1/add-doc', requireUser, uploadLocal.single('file'), doc.addHandler)
   app.post('/v1/docs/:id/assets', requireUser, uploadLocal.single('file'), doc.addAssetHandler)
