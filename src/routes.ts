@@ -4,6 +4,7 @@ import * as auth from './controller/auth.controller'
 import * as user from './controller/user.controller'
 import * as doc from './controller/doc.controller'
 import * as tag from './controller/tag.controller'
+import * as author from './controller/author.controller'
 import { checkToken } from './middleware/check-token'
 import { requireAdmin, requireUser } from './middleware/require-user'
 import { uploadLocal, uploadS3 } from './middleware/upload'
@@ -51,6 +52,11 @@ function routes(app: Express) {
   app.get('/v1/tags/:id', requireUser, tag.getOneHandler)
   app.patch('/v1/tags/:id', requireUser, tag.updateHandler)
   app.delete('/v1/tags/:id', requireUser, tag.deleteHandler)
+
+  app.get('/v1/authors', requireUser, author.getAllHandler)
+  app.get('/v1/authors/:id', requireUser, author.getOneHandler)
+  app.patch('/v1/authors/:id', requireUser, author.updateHandler)
+  app.delete('/v1/authors/:id', requireUser, author.deleteHandler)
 }
 
 export default routes

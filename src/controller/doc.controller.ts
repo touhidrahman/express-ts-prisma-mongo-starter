@@ -49,7 +49,7 @@ export async function getCountHandler(req: Request<{}, {}, {}, DocQueryParams>, 
 export async function getAllHandler(req: Request<{}, {}, {}, DocQueryParams>, res: Response) {
   try {
     const userId = res.locals.user.id
-    const { search = '', take = 24, skip = 0, orderBy = 'asc', authorId = '', rating = 0, tagId = '' } = req.query
+    const { search = '', take = 24, skip = 0, orderBy = 'asc', authorId = '', rating = 0, tagId = '', sortBy = 'updatedAt' } = req.query
 
     const results = await service.findMany({
       where: {
@@ -73,7 +73,7 @@ export async function getAllHandler(req: Request<{}, {}, {}, DocQueryParams>, re
       take: Number(take) || undefined,
       skip: Number(skip) || undefined,
       orderBy: {
-        updatedAt: orderBy,
+        [sortBy]: orderBy,
       },
     })
 

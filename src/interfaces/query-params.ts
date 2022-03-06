@@ -9,4 +9,5 @@ export interface DocQueryParams extends CommonQueryParams {
   tagId?: string
   authorId?: string
   rating?: number
+  sortBy?: 'title' | 'createdAt' | 'updatedAt' | 'publishedOn' | 'rating'
 }
