@@ -142,7 +142,7 @@ export async function addHandler(req: Request<{}, {}, AddDocInput>, res: Respons
         connect: foundTags.map((tag) => ({ id: tag.id })),
         createMany: notFoundTags.length
           ? {
-              data: notFoundTags.map((tagName) => ({ name: tagName, userId })),
+              data: notFoundTags.map((tagName) => ({ name: tagName.toLowerCase(), userId })),
             }
           : undefined,
       },
@@ -333,3 +333,4 @@ export async function deleteHandler(req: Request<{ id: string }, {}>, res: Respo
     res.status(500).send({ message: error.message })
   }
 }
+

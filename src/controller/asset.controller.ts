@@ -70,7 +70,7 @@ export async function uploadMultipleAssetHandler(req: Request, res: Response) {
 
 export async function getAssetHandler(req: Request, res: Response) {
   try {
-    const key = req.params.key
+    const key = req.query.key as string
     const fileObj = await downloadS3Object(key)
 
     res.setHeader('Content-Type', fileObj.ContentType ?? '')
