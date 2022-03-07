@@ -286,7 +286,6 @@ export async function confirmEmailChangeHandler(req: Request, res: Response) {
 
 export async function getUserUsingTokenHandler(req: Request, res: Response) {
   try {
-    console.log('TCL: ~ token ', );
     const user = res.locals.user
     if (!user ) return res.status(404).json({ message: 'User not found' })
 

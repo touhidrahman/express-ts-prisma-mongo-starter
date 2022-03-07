@@ -38,7 +38,6 @@ export const uploadS3 = multer({
       cb(null, { fieldName: file.fieldname })
     },
     key: function (req, file, cb) {
-      console.log('TCL: | req', (req as any).query)
       cb(null, makeFileName(file.originalname))
     },
     acl: 'public-read',

@@ -30,7 +30,7 @@ function routes(app: Express) {
   app.get('/v1/user/:id', user.getUserHandler)
   app.patch('/v1/user/:id', requireUser, user.updateUserHandler)
 
-  app.get('/v1/assets/:key', asset.getAssetHandler)
+  app.get('/v1/assets', asset.getAssetHandler)
   app.post('/v1/assets', requireUser, uploadLocal.single('file'), asset.uploadAssetHandler)
   app.post('/v1/assets-multi', requireUser, uploadS3.array('files'), asset.uploadMultipleAssetHandler)
   app.delete('/v1/assets/:key', requireUser, asset.deleteAssetHandler)
