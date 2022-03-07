@@ -310,22 +310,64 @@ export async function updateHandler(req: Request<{ id: string }, {}, Prisma.DocC
   }
 }
 
+export async function updatePageReadHandler(req: Request<{ id: string }, {}, { readPage: number }>, res: Response) {
+  try {
+    const { readPage } = req.body
+    await service.update({
+      where: { id: req.params.id },
+      data: {
+        readPage: Number(readPage),
+      },
+      select: {
+        readPage: true,
+      }
+    })
+
+    res.sendStatus(200)
+  } catch (error: any) {
+    logger.error(`${logDomain}: ${error.message}`)
+    res.status(500).send({ message: error.message })
+  }
+}
+
 export async function deleteHandler(req: Request<{ id: string }, {}>, res: Response) {
   try {
-    const assetResult = await prisma.asset.findMany({ where: { docId: req.params.id }, select: { size: true } })
-    const freedSpace = assetResult.reduce((acc, cur) => acc + cur.size, 0)
+    const userId = res.locals.user.id
+
+    const freedSpace = await prisma.asset.aggregate({ _sum: { size: true }, where: { docId: req.params.id } })
 
     const spaceUpdate = prisma.user.update({
-      where: { id: res.locals.user.id },
+      where: { id: userId },
       data: {
-        usedSpace: { decrement: freedSpace },
+        usedSpace: { decrement: freedSpace._sum.size ?? 0 },
       },
     })
-    const assetDelete = prisma.asset.deleteMany({ where: { docId: req.params.id } })
     const docDelete = service.delete({
       where: { id: req.params.id },
     })
-    await prisma.$transaction([spaceUpdate, assetDelete, docDelete])
+    await prisma.$transaction([spaceUpdate, docDelete])
+
+    res.status(204).send()
+  } catch (error: any) {
+    logger.error(`${logDomain}: ${error.message}`)
+    res.status(500).send({ message: error.message })
+  }
+}
+
+export async function deleteManyHandler(req: Request<{ id: string }, { ids: string[] }>, res: Response) {
+  try {
+    const { ids } = req.body
+    const userId = res.locals.user.id
+    await prisma.doc.deleteMany({ where: { id: { in: ids } } })
+
+    const totalSpace = await prisma.asset.aggregate({ _sum: { size: true }, where: { userId } })
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        usedSpace:  totalSpace._sum.size ?? undefined,
+      },
+    })
 
     res.status(204).send()
   } catch (error: any) {

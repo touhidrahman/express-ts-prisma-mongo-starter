@@ -96,7 +96,7 @@ model Asset {
   docId    String? @db.ObjectId
   userId   String? @db.ObjectId
 
-  doc  Doc?  @relation(fields: [docId], references: [id])
+  doc  Doc?  @relation(fields: [docId], references: [id], onDelete: Cascade)
   user User? @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now())
