@@ -1,3 +1,4 @@
+import { assetQuerySchema } from './schema/asset.schema'
 import { Express, Request, Response } from 'express'
 import * as asset from './controller/asset.controller'
 import * as auth from './controller/auth.controller'
@@ -33,11 +34,11 @@ function routes(app: Express) {
   app.get('/v1/user/:id', user.getUserHandler)
   app.patch('/v1/user/:id', requireUser, user.updateUserHandler)
 
-  app.get('/v1/assets', asset.getAssetHandler)
+  app.get('/v1/assets', validate(assetQuerySchema), asset.getAssetHandler)
   app.post('/v1/assets', requireUser, uploadLocal.single('file'), asset.uploadAssetHandler)
   app.post('/v1/assets-multi', requireUser, uploadS3.array('files'), asset.uploadMultipleAssetHandler)
-  app.delete('/v1/assets/:key', requireUser, asset.deleteAssetHandler)
-  app.get('/v1/download/:key', requireUser, asset.downloadAssetHandler)
+  app.delete('/v1/assets', validate(assetQuerySchema), requireUser, asset.deleteAssetHandler)
+  app.get('/v1/download', validate(assetQuerySchema), requireUser, asset.downloadAssetHandler)
 
   app.get('/v1/docs', requireUser, doc.getAllHandler)
   app.get('/v1/docs/count', requireUser, doc.getCountHandler)

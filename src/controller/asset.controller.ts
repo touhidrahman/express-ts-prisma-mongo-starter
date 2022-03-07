@@ -84,9 +84,9 @@ export async function getAssetHandler(req: Request<{}, {}, {}, { key: string }>,
   }
 }
 
-export async function downloadAssetHandler(req: Request, res: Response) {
+export async function downloadAssetHandler(req: Request<{}, {}, {}, { key: string }>, res: Response) {
   try {
-    const key = req.params.key
+    const key = req.query.key
     const downloadedFile = await downloadS3Object(key)
 
     res.setHeader('Content-Disposition', `attachment; filename=${key}`)
@@ -100,9 +100,9 @@ export async function downloadAssetHandler(req: Request, res: Response) {
   }
 }
 
-export async function deleteAssetHandler(req: Request, res: Response) {
+export async function deleteAssetHandler(req: Request<{}, {}, {}, { key: string }>, res: Response) {
   try {
-    const key = req.params.key
+    const key = req.query.key
 
     const deletedFile = await deleteS3Object(key)
     if (!deletedFile) throw new Error('Delete failed')
