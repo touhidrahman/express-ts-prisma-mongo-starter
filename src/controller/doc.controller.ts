@@ -5,7 +5,7 @@ import fs from 'fs'
 import util from 'util'
 import { AddDocInput } from '../interfaces/inputs'
 import { DocQueryParams } from '../interfaces/query-params'
-import { uploadS3Object } from '../service/s3.service'
+import { deleteS3Object, uploadS3Object } from '../service/s3.service'
 import logger from '../utils/logger'
 import prisma from '../utils/prisma'
 
@@ -29,12 +29,12 @@ export async function getCountHandler(req: Request<{}, {}, {}, DocQueryParams>, 
               ],
             }
           : {}),
-          AND: [
-            { userId },
-            authorId ? { authorId } : {},
-            tagId ? { tags: { some: { id: tagId } } } : {},
-            rating > 0 ? { rating: { gte: rating } } : {},
-          ]
+        AND: [
+          { userId },
+          authorId ? { authorId } : {},
+          tagId ? { tags: { some: { id: tagId } } } : {},
+          rating > 0 ? { rating: { gte: rating } } : {},
+        ],
       },
     })
 
@@ -43,13 +43,21 @@ export async function getCountHandler(req: Request<{}, {}, {}, DocQueryParams>, 
     logger.error(`${logDomain}: ${error.message}`)
     res.status(500).send({ message: error.message })
   }
-
 }
 
 export async function getAllHandler(req: Request<{}, {}, {}, DocQueryParams>, res: Response) {
   try {
     const userId = res.locals.user.id
-    const { search = '', take = 24, skip = 0, orderBy = 'asc', authorId = '', rating = 0, tagId = '', sortBy = 'updatedAt' } = req.query
+    const {
+      search = '',
+      take = 24,
+      skip = 0,
+      orderBy = 'asc',
+      authorId = '',
+      rating = 0,
+      tagId = '',
+      sortBy = 'updatedAt',
+    } = req.query
 
     const results = await service.findMany({
       where: {
@@ -62,12 +70,12 @@ export async function getAllHandler(req: Request<{}, {}, {}, DocQueryParams>, re
               ],
             }
           : {}),
-          AND: [
-            { userId },
-            authorId ? { authorId } : {},
-            tagId ? { tags: { some: { id: tagId } } } : {},
-            rating > 0 ? { rating: { gte: rating } } : {},
-          ]
+        AND: [
+          { userId },
+          authorId ? { authorId } : {},
+          tagId ? { tags: { some: { id: tagId } } } : {},
+          rating > 0 ? { rating: { gte: rating } } : {},
+        ],
       },
       include: { author: true, tags: true, assets: true },
       take: Number(take) || undefined,
@@ -242,7 +250,10 @@ export async function addAssetHandler(req: Request<{ id: string }, {}, AddDocInp
   }
 }
 
-export async function deleteAssetHandler(req: Request<{ id: string, assetId: string }, {}, AddDocInput>, res: Response) {
+export async function deleteAssetHandler(
+  req: Request<{ id: string; assetId: string }, {}, AddDocInput>,
+  res: Response,
+) {
   try {
     const userId = res.locals.user.id
     const assetId = req.params.assetId
@@ -320,7 +331,7 @@ export async function updatePageReadHandler(req: Request<{ id: string }, {}, { r
       },
       select: {
         readPage: true,
-      }
+      },
     })
 
     res.sendStatus(200)
@@ -334,6 +345,10 @@ export async function deleteHandler(req: Request<{ id: string }, {}>, res: Respo
   try {
     const userId = res.locals.user.id
 
+    const foundAssets = await prisma.asset.findMany({
+      where: { doc: { id: req.params.id }, user: { id: userId } },
+      select: { name: true },
+    })
     const freedSpace = await prisma.asset.aggregate({ _sum: { size: true }, where: { docId: req.params.id } })
 
     const spaceUpdate = prisma.user.update({
@@ -347,6 +362,8 @@ export async function deleteHandler(req: Request<{ id: string }, {}>, res: Respo
     })
     await prisma.$transaction([spaceUpdate, docDelete])
 
+    await deleteAssets(foundAssets)
+
     res.status(204).send()
   } catch (error: any) {
     logger.error(`${logDomain}: ${error.message}`)
@@ -358,16 +375,21 @@ export async function deleteManyHandler(req: Request<{ id: string }, { ids: stri
   try {
     const { ids } = req.body
     const userId = res.locals.user.id
-    await prisma.doc.deleteMany({ where: { id: { in: ids } } })
-
+    const foundAssets = await prisma.asset.findMany({
+      where: { doc: { id: { in: ids } }, user: { id: userId } },
+      select: { name: true },
+    })
     const totalSpace = await prisma.asset.aggregate({ _sum: { size: true }, where: { userId } })
+    await prisma.doc.deleteMany({ where: { id: { in: ids } } })
 
     await prisma.user.update({
       where: { id: userId },
       data: {
-        usedSpace:  totalSpace._sum.size ?? undefined,
+        usedSpace: totalSpace._sum.size ?? undefined,
       },
     })
+
+    await deleteAssets(foundAssets)
 
     res.status(204).send()
   } catch (error: any) {
@@ -376,3 +398,8 @@ export async function deleteManyHandler(req: Request<{ id: string }, { ids: stri
   }
 }
 
+async function deleteAssets(assets: { name: string }[]) {
+  for (const asset of assets) {
+    const res = await deleteS3Object(asset.name)
+  }
+}
