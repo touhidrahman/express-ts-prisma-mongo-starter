@@ -119,3 +119,19 @@ export async function deleteAssetHandler(req: Request<{}, {}, {}, { key: string 
     res.status(500).json({ message: error.message })
   }
 }
+
+export async function getUsedSpaceHandler(req: Request, res: Response) {
+  try {
+    const userId = res.locals.user.id
+
+    const result = await prisma.asset.aggregate({
+      where: { user: { id: userId } },
+      _sum: { size: true },
+    })
+
+    res.status(200).json({used: result._sum.size})
+  } catch (error: any) {
+    logger.error(`${logDomain}: ${error.message}`)
+    res.status(500).json({ message: error.message })
+  }
+}

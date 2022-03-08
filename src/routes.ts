@@ -39,6 +39,7 @@ function routes(app: Express) {
   app.post('/v1/assets-multi', requireUser, uploadS3.array('files'), asset.uploadMultipleAssetHandler)
   app.delete('/v1/assets', validate(assetQuerySchema), requireUser, asset.deleteAssetHandler)
   app.get('/v1/download', validate(assetQuerySchema), requireUser, asset.downloadAssetHandler)
+  app.get('/v1/assets/used-space', requireUser, asset.getUsedSpaceHandler)
 
   app.get('/v1/docs', requireUser, doc.getAllHandler)
   app.get('/v1/docs/count', requireUser, doc.getCountHandler)
