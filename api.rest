@@ -5,26 +5,40 @@
 
 
 
-POST {{host}}/register
+POST {{host}}/auth/register
 Content-Type: application/json
 
 {
-  "email": "a4@b.com",
-    "password": "Abcd1234!",
-    "passwordConfirmation": "Abcd1234!",
-    "firstName": "A",
-    "lastName": "B"
+  "email": "a2@b.com",
+  "password": "Abcd1234!",
+  "passwordConfirmation": "Abcd1234!",
+  "firstName": "A",
+  "lastName": "B"
 }
 
 ###
 
 
-POST {{host}}/create-admin
+POST {{host}}/auth/create-first-admin
+Content-Type: application/json
+
+{
+  "email": "a@b.com",
+  "password": "Abcd1234!",
+  "passwordConfirmation": "Abcd1234!",
+  "firstName": "A",
+  "lastName": "B"
+}
+
+###
+
+
+POST {{host}}/auth/create-admin
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "email": "a6@b.com",
+  "email": "a@b.com",
     "password": "Abcd1234!",
     "passwordConfirmation": "Abcd1234!",
     "firstName": "A",
@@ -33,7 +47,7 @@ Authorization: Bearer {{accessToken}}
 
 ### LOGIN
 
-POST {{host}}/login
+POST {{host}}/auth/login
 Content-Type: application/json
 
 {
@@ -43,7 +57,7 @@ Content-Type: application/json
 
 ###
 
-POST {{host}}/forgot-password
+POST {{host}}/auth/forgot-password
 Content-Type: application/json
 
 {
@@ -52,7 +66,7 @@ Content-Type: application/json
 
 ###
 
-POST {{host}}/reset-password/r1wm2vbeax239csn7roepf2seq9e636q87uoy1zk
+POST {{host}}/auth/reset-password/r1wm2vbeax239csn7roepf2seq9e636q87uoy1zk
 Content-Type: application/json
 
 {
@@ -62,7 +76,7 @@ Content-Type: application/json
 
 ###
 
-POST {{host}}/change-password
+POST {{host}}/auth/change-password
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -73,13 +87,13 @@ Authorization: Bearer {{accessToken}}
 
 ###
 
-POST {{host}}/change-email/60f335bf00b32ef000bd9a94/confirm/kpzsaaq2l28o1y8b5zdzjb85i6acve1z1pa702z5
+POST {{host}}/auth/change-email/60f335bf00b32ef000bd9a94/confirm/kpzsaaq2l28o1y8b5zdzjb85i6acve1z1pa702z5
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ###
 
-POST {{host}}/change-email/60f335bf00b32ef000bd9a94
+POST {{host}}/auth/change-email/60f335bf00b32ef000bd9a94
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
