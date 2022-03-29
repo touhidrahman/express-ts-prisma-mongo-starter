@@ -1,15 +1,14 @@
-import { assetQuerySchema } from './schema/asset.schema'
 import { Express, Request, Response } from 'express'
 import * as asset from './controller/asset.controller'
 import * as auth from './controller/auth.controller'
-import * as user from './controller/user.controller'
-import * as profile from './controller/profile.controller'
 import * as conversation from './controller/conversation.controller'
-import * as message from './controller/message.controller'
+import * as profile from './controller/profile.controller'
+import * as user from './controller/user.controller'
 import { checkToken } from './middleware/check-token'
 import { requireAdmin, requireUser } from './middleware/require-user'
 import { uploadLocal, uploadS3 } from './middleware/upload'
 import validate from './middleware/validate'
+import { assetQuerySchema } from './schema/asset.schema'
 import { authSchema, forgotPasswordSchema, registerSchema, resetPasswordSchema } from './schema/auth.schema'
 
 function routes(app: Express) {
@@ -25,6 +24,7 @@ function routes(app: Express) {
   app.post('/v1/auth/resend-verification', requireUser, auth.resendVerficiation)
   app.post('/v1/auth/verify-email/:token', checkToken('EmailVerification'), auth.verifyEmail)
   app.post('/v1/auth/change-user-role/:id', requireAdmin, auth.changeUserRole)
+  app.post('/v1/auth/disable-user/:id', requireAdmin, auth.disableUser)
   app.post('/v1/auth/change-email/:id', requireUser, validate(forgotPasswordSchema), auth.changeEmail)
   app.post('/v1/auth/change-email/:id/confirm/:token', checkToken('EmailChange'), auth.confirmEmailChange)
   app.post('/v1/auth/create-admin', requireAdmin, validate(registerSchema), auth.createAdminUser)

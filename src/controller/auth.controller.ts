@@ -115,6 +115,11 @@ export async function login(req: Request, res: Response) {
     return res.status(401).json({ message: 'Invalid email or password' })
   }
 
+  if (user.disabled) {
+    logger.warn(`${logDomain}: Disabled user login attempt: ${req.body.email}`)
+    return res.status(403).json({ message: 'Your account was disabled' })
+  }
+
   const session = await prisma.session.create({
     data: {
       userId: user.id,
@@ -287,11 +292,28 @@ export async function confirmEmailChange(req: Request, res: Response) {
 export async function getUserUsingToken(req: Request, res: Response) {
   try {
     const user = res.locals.user
-    if (!user ) return res.status(404).json({ message: 'User not found' })
+    if (!user) return res.status(404).json({ message: 'User not found' })
 
-    return res.json({...user, password: undefined})
+    return res.json({ ...user, password: undefined })
   } catch (e: any) {
     logger.error(`${logDomain}: Error getting user: ${e.message}`)
     return res.status(409).json({ message: e.message })
+  }
+}
+
+export async function disableUser(req: Request<{ id: string }>, res: Response) {
+  try {
+    const userId = req.params.id
+
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: { disabled: true, emailVerified: false, sessions: { deleteMany: { userId } } },
+    })
+
+    logger.info(`${logDomain}: User disabled. User ID: ${user?.id}`)
+    return res.status(200).json()
+  } catch (error: any) {
+    logger.error(`${logDomain}: Error disabling user: ${error.message}`)
+    return res.status(500).json({ message: error.message })
   }
 }

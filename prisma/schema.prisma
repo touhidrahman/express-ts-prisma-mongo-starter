@@ -52,6 +52,7 @@ model User {
   birthDate     DateTime? @db.Date
   role          UserRole  @default(USER)
   emailVerified Boolean   @default(false)
+  disabled      Boolean   @default(false)
 
   emailChange           EmailChange?
   emailVerification     EmailVerification?
