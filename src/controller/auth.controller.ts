@@ -20,7 +20,7 @@ import prisma from '../utils/prisma'
 
 const logDomain = 'AUTH'
 
-export async function registerHandler(req: Request<{}, {}, SignupInput>, res: Response) {
+export async function register(req: Request<{}, {}, SignupInput>, res: Response) {
   try {
     const user = await createUser(req.body)
     const tokenRecord = await createOrUpdateEmailVerificationRecord(user.id)
@@ -69,7 +69,7 @@ export async function createFirstAdmin(req: Request<{}, {}, SignupInput>, res: R
   }
 }
 
-export async function verifyEmailHandler(req: Request, res: Response) {
+export async function verifyEmail(req: Request, res: Response) {
   try {
     const userId = res.locals.user.id
 
@@ -88,7 +88,7 @@ export async function verifyEmailHandler(req: Request, res: Response) {
   }
 }
 
-export async function resendVerficiationHandler(req: Request, res: Response) {
+export async function resendVerficiation(req: Request, res: Response) {
   try {
     const user = res.locals.user
     const tokenRecord = await createOrUpdateEmailVerificationRecord(user.id)
@@ -107,7 +107,7 @@ export async function resendVerficiationHandler(req: Request, res: Response) {
   }
 }
 
-export async function loginHandler(req: Request, res: Response) {
+export async function login(req: Request, res: Response) {
   const user = await validatePassword(req.body)
 
   if (!user) {
@@ -129,7 +129,7 @@ export async function loginHandler(req: Request, res: Response) {
   return res.json({ accessToken, refreshToken })
 }
 
-export async function getUserSessionsHandler(req: Request, res: Response) {
+export async function getUserSessions(req: Request, res: Response) {
   const userId = res.locals.user.id
 
   const sessions = await prisma.session.findMany({
@@ -140,7 +140,7 @@ export async function getUserSessionsHandler(req: Request, res: Response) {
   return res.json(sessions)
 }
 
-export async function logoutHandler(req: Request, res: Response) {
+export async function logout(req: Request, res: Response) {
   const sessionId = res.locals.user.session
 
   await prisma.session.update({
@@ -156,7 +156,7 @@ export async function logoutHandler(req: Request, res: Response) {
   })
 }
 
-export async function forgotPasswordHandler(req: Request, res: Response) {
+export async function forgotPassword(req: Request, res: Response) {
   try {
     const email = req.body.email
 
@@ -185,7 +185,7 @@ export async function forgotPasswordHandler(req: Request, res: Response) {
   }
 }
 
-export async function resetPasswordHandler(req: Request, res: Response) {
+export async function resetPassword(req: Request, res: Response) {
   try {
     const userId = res.locals.user.id
     const token = req.params.token ?? ''
@@ -212,7 +212,7 @@ export async function resetPasswordHandler(req: Request, res: Response) {
   }
 }
 
-export async function changeUserRoleHandler(req: Request, res: Response) {
+export async function changeUserRole(req: Request, res: Response) {
   try {
     const userId = req.params.id
     const role = req.body.role
@@ -232,7 +232,7 @@ export async function changeUserRoleHandler(req: Request, res: Response) {
   }
 }
 
-export async function changeEmailHandler(req: Request, res: Response) {
+export async function changeEmail(req: Request, res: Response) {
   try {
     const userId = req.params.id
     const email = req.body.email
@@ -259,7 +259,7 @@ export async function changeEmailHandler(req: Request, res: Response) {
   }
 }
 
-export async function confirmEmailChangeHandler(req: Request, res: Response) {
+export async function confirmEmailChange(req: Request, res: Response) {
   try {
     const token = req.params.token
     const userId = req.params.id
@@ -284,7 +284,7 @@ export async function confirmEmailChangeHandler(req: Request, res: Response) {
   }
 }
 
-export async function getUserUsingTokenHandler(req: Request, res: Response) {
+export async function getUserUsingToken(req: Request, res: Response) {
   try {
     const user = res.locals.user
     if (!user ) return res.status(404).json({ message: 'User not found' })

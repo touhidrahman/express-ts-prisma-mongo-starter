@@ -128,7 +128,7 @@ model Conversation {
 
   senderId   String    @db.ObjectId
   receiverId String    @db.ObjectId
-  Message    Message[]
+  messages   Message[]
 
   sender   User @relation("sentConversations", fields: [senderId], references: [id])
   receiver User @relation("receivedConversations", fields: [receiverId], references: [id])
