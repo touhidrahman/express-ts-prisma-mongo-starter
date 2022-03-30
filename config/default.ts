@@ -5,6 +5,8 @@ export default {
   awsAccessKeyId: '',
   awsSecretAccessKey: '',
   dbUri: "",
+  redisUri: "",
+  redisPassword: "",
   emailSenderAddress: "",
   emailSenderName: "",
   emailSmtpHost: "",

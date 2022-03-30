@@ -4,19 +4,27 @@ import { CommonQueryParams } from '../core/interfaces/query-params'
 import logger from '../core/service/logger.service'
 import prisma from '../core/db/prisma'
 import { buildResponseMessages } from '../core/utils/response-messages.util'
+import redisClient from '../core/db/redis'
 
 const entity = 'profile'
 const logDomain = entity.toUpperCase()
 const service = prisma[entity]
 const resMessages = buildResponseMessages(entity)
+const cacheTime = 900
 type CreateInput = Prisma.ProfileCreateManyInput
 type UpdateInput = Prisma.ProfileUncheckedUpdateInput
 
 export async function getMany(req: Request<{}, {}, {}, CommonQueryParams>, res: Response) {
   try {
     const { search = '', take = 24, skip = 0, orderBy = 'asc', published = true } = req.query
+    const cacheKey = `${entity}:${JSON.stringify(req.query)}`
 
-    const results = await service.findMany({
+    if (redisClient.isOpen) {
+      const cached = await redisClient.get(cacheKey)
+      if (cached) return res.json(JSON.parse(cached))
+    }
+
+    const result = await service.findMany({
       where: {
         ...(search
           ? {
@@ -35,7 +43,9 @@ export async function getMany(req: Request<{}, {}, {}, CommonQueryParams>, res: 
       },
     })
 
-    res.send(results)
+    redisClient.isOpen && await redisClient.setEx(cacheKey, cacheTime, JSON.stringify(result))
+
+    res.send(result)
   } catch (error: any) {
     logger.error(`${logDomain}: ${error.message}`)
     res.status(500).send({ message: resMessages.serverError })
@@ -45,10 +55,18 @@ export async function getMany(req: Request<{}, {}, {}, CommonQueryParams>, res: 
 export async function getOne(req: Request<{ id: string }>, res: Response) {
   try {
     const { id } = req.params
+    const cacheKey = `${entity}:${id}`
+
+    if (redisClient.isOpen) {
+      const cached = await redisClient.get(cacheKey)
+      if (cached) return res.json(JSON.parse(cached))
+    }
 
     const result = await service.findUnique({
       where: { id },
     })
+
+    redisClient.isOpen && await redisClient.setEx(cacheKey, cacheTime, JSON.stringify(result))
 
     res.send(result)
   } catch (error: any) {

@@ -35,6 +35,7 @@
     "pino-http": "^6.6.0",
     "pino-pretty": "^7.6.0",
     "prisma": "^3.11.1",
+    "redis": "^4.0.4",
     "response-time": "^2.3.2",
     "stripe": "^8.213.0",
     "swagger-jsdoc": "^6.1.0",

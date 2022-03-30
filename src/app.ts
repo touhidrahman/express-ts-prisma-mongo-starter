@@ -15,6 +15,7 @@ import prisma from './core/db/prisma'
 import httpLogger from './core/middleware/http-logger'
 import rateLimiter from './core/middleware/rate-limiter'
 import { webhooksHandler } from './webhook/webhooks.controller'
+import redisClient from './core/db/redis'
 
 const port = config.get<number>('port')
 
@@ -31,6 +32,8 @@ app.use(parseJwt)
 
 app.listen(port, async () => {
   await prisma.$connect()
+
+  await redisClient.connect()
 
   logger.info(`🚀 App is running at http://localhost:${port}`)
 

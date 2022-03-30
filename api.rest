@@ -100,3 +100,8 @@ Authorization: Bearer {{accessToken}}
 {
   "email": "a1@b.com"
 }
+
+###
+
+GET {{host}}/profiles
+Content-Type: application/json

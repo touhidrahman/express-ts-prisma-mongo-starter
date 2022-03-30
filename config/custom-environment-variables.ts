@@ -7,6 +7,8 @@ export default {
   awsDefaultRegion: "AWS_DEFAULT_REGION",
   awsSecretAccessKey: "AWS_SECRET_ACCESS_KEY",
   dbUri: "DATABASE_URL",
+  redisUri: "REDIS_URL",
+  redisPassword: "REDIS_PASSWORD",
   emailSenderAddress: "EMAIL_SENDER_ADDRESS",
   emailSenderName: "EMAIL_SENDER_NAME",
   emailSmtpHost: "EMAIL_SMTP_HOST",
