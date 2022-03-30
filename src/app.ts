@@ -16,6 +16,9 @@ import httpLogger from './core/middleware/http-logger'
 import rateLimiter from './core/middleware/rate-limiter'
 import { webhooksHandler } from './webhook/webhooks.controller'
 import redisClient from './core/db/redis'
+import { createServer } from 'http'
+import { Server, Socket } from 'socket.io'
+import socket from './core/socket/socket'
 
 const port = config.get<number>('port')
 
@@ -30,14 +33,20 @@ app.use(helmet())
 app.use(rateLimiter)
 app.use(parseJwt)
 
-app.listen(port, async () => {
-  await prisma.$connect()
+const httpServer = createServer(app)
+const io = new Server(httpServer, {
+  cors: {
+    origin: '*',
+  },
+})
 
+httpServer.listen(port, async () => {
+  await prisma.$connect()
   await redisClient.connect()
 
   logger.info(`🚀 App is running at http://localhost:${port}`)
 
   routes(app)
-
   swaggerDocs(app, port)
+  socket({ io })
 })

@@ -4,6 +4,7 @@ export default {
   accessTokenTtl: "7d",
   awsAccessKeyId: '',
   awsSecretAccessKey: '',
+  corsOrigin: '',
   dbUri: "",
   redisUri: "",
   redisPassword: "",

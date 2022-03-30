@@ -37,6 +37,7 @@
     "prisma": "^3.11.1",
     "redis": "^4.0.4",
     "response-time": "^2.3.2",
+    "socket.io": "^4.4.1",
     "stripe": "^8.213.0",
     "swagger-jsdoc": "^6.1.0",
     "swagger-ui-express": "^4.3.0",
