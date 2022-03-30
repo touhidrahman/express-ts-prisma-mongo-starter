@@ -1,22 +1,22 @@
 import { Request, Response } from 'express'
-import { SignupInput } from '../schema/auth.schema'
+import { SignupInput } from './auth.schema'
 import {
   createAccessToken,
   createOrUpdateEmailChangeRecord,
   createOrUpdateEmailVerificationRecord,
   createOrUpdatePasswordResetRecord,
   createRefreshToken,
-} from '../service/auth.service'
+} from './auth.service'
 import {
   sendPasswordResetEmail,
   sendPasswordResetSuccessEmail,
   sendUserEmailChangeEmail,
   sendWelcomeEmail,
-} from '../service/mailer.service'
-import { generatePasswordHash } from '../service/password.service'
-import { createUser, validatePassword } from '../service/user.service'
-import logger from '../utils/logger'
-import prisma from '../utils/prisma'
+} from '../mailer/mailer.service'
+import { generatePasswordHash } from '../core/service/password.service'
+import { createUser, validatePassword } from '../user/user.service'
+import logger from '../core/service/logger.service'
+import prisma from '../core/db/prisma'
 
 const logDomain = 'AUTH'
 
@@ -130,7 +130,7 @@ export async function login(req: Request, res: Response) {
   const accessToken = createAccessToken(user, session.id)
   const refreshToken = createRefreshToken(user, session.id)
 
-  logger.info(`${logDomain}: Login success for user ${user.id}`)
+  logger.info(`${logDomain}: Login success for user ${user.email}`)
   return res.json({ accessToken, refreshToken })
 }
 

@@ -1,8 +1,8 @@
 import { Prisma, User } from '@prisma/client'
 import { Request, Response } from 'express'
-import logger from '../utils/logger'
-import prisma from '../utils/prisma'
-import { buildResponseMessages } from '../utils/response-messages.util'
+import logger from '../core/service/logger.service'
+import prisma from '../core/db/prisma'
+import { buildResponseMessages } from '../core/utils/response-messages.util'
 
 const entity = 'user'
 const logDomain = entity.toUpperCase()

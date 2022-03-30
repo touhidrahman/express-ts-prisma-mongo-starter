@@ -1,4 +1,4 @@
-import logger from '../utils/logger'
+import logger from '../core/service/logger.service'
 
 const logDomain = 'WEBHOOK_STRIPE'
 

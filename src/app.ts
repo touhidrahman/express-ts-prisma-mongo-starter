@@ -7,14 +7,14 @@ import config from 'config'
 import helmet from 'helmet'
 import cors from 'cors'
 
-import logger from './utils/logger'
+import logger from './core/service/logger.service'
 import routes from './routes'
-import parseJwt from './middleware/parse-jwt'
-import swaggerDocs from './utils/swagger'
-import prisma from './utils/prisma'
-import httpLogger from './middleware/http-logger'
-import rateLimiter from './middleware/rate-limiter'
-import { webhooksHandler } from './controller/webhooks.controller'
+import parseJwt from './core/middleware/parse-jwt'
+import swaggerDocs from './core/utils/swagger'
+import prisma from './core/db/prisma'
+import httpLogger from './core/middleware/http-logger'
+import rateLimiter from './core/middleware/rate-limiter'
+import { webhooksHandler } from './webhook/webhooks.controller'
 
 const port = config.get<number>('port')
 

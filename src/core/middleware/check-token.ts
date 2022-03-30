@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import prisma from '../utils/prisma'
+import prisma from '../db/prisma'
 
 /**
  * Checks a given token from route param and sets the user (if valid and exists) to req.local.user

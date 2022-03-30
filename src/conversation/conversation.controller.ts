@@ -1,9 +1,9 @@
 import { Prisma } from '@prisma/client'
 import { Request, Response } from 'express'
-import { CommonQueryParams, ConversationQueryParams } from '../interfaces/query-params'
-import logger from '../utils/logger'
-import prisma from '../utils/prisma'
-import { buildResponseMessages } from '../utils/response-messages.util'
+import { CommonQueryParams, ConversationQueryParams } from '../core/interfaces/query-params'
+import logger from '../core/service/logger.service'
+import prisma from '../core/db/prisma'
+import { buildResponseMessages } from '../core/utils/response-messages.util'
 
 const entity = 'conversation'
 const logDomain = entity.toUpperCase()

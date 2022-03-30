@@ -1,9 +1,9 @@
 import config from 'config'
 import dayjs from 'dayjs'
 import { get } from 'lodash'
-import { randomId } from '../utils/id'
-import { signJwt, verifyJwt } from '../utils/jwt.utils'
-import prisma from '../utils/prisma'
+import { randomId } from '../core/utils/id'
+import { signJwt, verifyJwt } from '../core/service/jwt.service'
+import prisma from '../core/db/prisma'
 
 export function createAccessToken(user: any, sessionId: string): string {
   return signJwt({ ...user, session: sessionId }, 'accessTokenPrivateKey', {

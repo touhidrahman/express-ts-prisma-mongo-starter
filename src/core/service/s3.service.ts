@@ -4,26 +4,6 @@ import config from 'config'
 import dayjs from 'dayjs'
 import { randomId } from '../utils/id'
 
-export type MulterUploadedFile = {
-  fieldname: string
-  originalname: string
-  encoding: string
-  mimetype: string
-  size: number
-  bucket: string
-  key: string
-  acl: string
-  contentType: string
-  contentDisposition: string
-  contentEncoding: string
-  storageClass: string
-  serverSideEncryption: string
-  metadata: { fieldName: string }
-  location: string
-  etag: string
-  versionId: undefined
-}
-
 export const accessKeyId = config.get<string>('awsAccessKeyId')
 export const secretAccessKey = config.get<string>('awsSecretAccessKey')
 export const bucket = config.get<string>('awsBucketName')

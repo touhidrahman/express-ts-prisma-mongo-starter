@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer'
 import config from 'config'
-import logger from '../utils/logger'
+import logger from '../core/service/logger.service'
 
 const host = config.get<string>('emailSmtpHost')
 const port = config.get<number>('emailSmtpPort')

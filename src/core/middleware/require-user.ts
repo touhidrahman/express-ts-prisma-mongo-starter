@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import logger from '../utils/logger'
+import logger from '../service/logger.service'
 
 export const requireUser = (req: Request, res: Response, next: NextFunction) => {
   const user = res.locals.user

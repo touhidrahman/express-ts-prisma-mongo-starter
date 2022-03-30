@@ -1,5 +1,5 @@
 import PinoHttp from 'pino-http'
-import defaultLogger from '../utils/logger'
+import defaultLogger from '../service/logger.service'
 
 const httpLogger = PinoHttp({
   logger: defaultLogger,

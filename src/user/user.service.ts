@@ -1,8 +1,8 @@
 import { Prisma, UserRole } from '@prisma/client'
 import { omit } from 'lodash'
-import { LoginInput, SignupInput } from '../schema/auth.schema'
-import prisma from '../utils/prisma'
-import { comparePassword, generatePasswordHash } from './password.service'
+import { LoginInput, SignupInput } from '../auth/auth.schema'
+import prisma from '../core/db/prisma'
+import { comparePassword, generatePasswordHash } from '../core/service/password.service'
 
 export async function createUser(input: SignupInput & { role?: UserRole }) {
   try {

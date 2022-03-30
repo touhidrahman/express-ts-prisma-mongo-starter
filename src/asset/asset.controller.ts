@@ -1,9 +1,10 @@
 import { Request, Response } from 'express'
 import fs from 'fs'
 import util from 'util'
-import { deleteS3Object, downloadS3Object, MulterUploadedFile, uploadS3Object } from '../service/s3.service'
-import logger from '../utils/logger'
-import prisma from '../utils/prisma'
+import { MulterUploadedFile } from '../core/interfaces/multer-upload-file'
+import { deleteS3Object, downloadS3Object, uploadS3Object } from '../core/service/s3.service'
+import logger from '../core/service/logger.service'
+import prisma from '../core/db/prisma'
 
 const logDomain = 'ASSET'
 const unlinkFile = util.promisify(fs.unlink)

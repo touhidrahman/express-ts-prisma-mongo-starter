@@ -1,7 +1,7 @@
 import { get } from 'lodash'
 import { Request, Response, NextFunction } from 'express'
-import { verifyJwt } from '../utils/jwt.utils'
-import { reIssueAccessToken } from '../service/auth.service'
+import { verifyJwt } from '../service/jwt.service'
+import { reIssueAccessToken } from '../../auth/auth.service'
 
 const deserializeUser = async (req: Request, res: Response, next: NextFunction) => {
   const accessToken = get(req, 'headers.authorization', '').replace(/^Bearer\s/, '')
