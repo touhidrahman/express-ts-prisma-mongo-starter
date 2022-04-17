@@ -1,6 +1,7 @@
-import { bucket, makeFileName, s3 } from '../service/s3.service'
+import { makeFileName, s3 } from '../service/s3.service'
 import multer from 'multer'
 import multerS3 from 'multer-s3'
+import { AWS_BUCKET_NAME } from '../../vars'
 
 export const uploadLocal = multer({ dest: 'uploads/' })
 
@@ -11,7 +12,7 @@ export const uploadS3Folder = function (folder: string) {
     },
     storage: multerS3({
       s3,
-      bucket,
+      bucket: AWS_BUCKET_NAME,
       cacheControl: 'max-age=31536000',
       contentType: multerS3.AUTO_CONTENT_TYPE,
       metadata: function (req, file, cb) {
@@ -31,7 +32,7 @@ export const uploadS3 = multer({
   },
   storage: multerS3({
     s3,
-    bucket,
+    bucket: AWS_BUCKET_NAME,
     cacheControl: 'max-age=31536000',
     contentType: multerS3.AUTO_CONTENT_TYPE,
     metadata: function (req, file, cb) {

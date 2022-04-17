@@ -6,19 +6,19 @@ import prisma from '../core/db/prisma'
 import { ACCESS_TOKEN_TTL, REFRESH_TOKEN_TTL } from '../vars'
 
 export function createAccessToken(user: any, sessionId: string): string {
-  return signJwt({ ...user, session: sessionId }, 'accessTokenPrivateKey', {
+  return signJwt({ ...user, session: sessionId }, 'access', {
     expiresIn: ACCESS_TOKEN_TTL,
   })
 }
 
 export function createRefreshToken(user: any, sessionId: string): string {
-  return signJwt({ ...user, session: sessionId }, 'refreshTokenPrivateKey', {
+  return signJwt({ ...user, session: sessionId }, 'refresh', {
     expiresIn: REFRESH_TOKEN_TTL,
   })
 }
 
 export async function reIssueAccessToken({ refreshToken }: { refreshToken: string }) {
-  const { decoded } = verifyJwt(refreshToken, 'refreshTokenPublicKey')
+  const { decoded } = verifyJwt(refreshToken, 'refresh')
 
   if (!decoded || !get(decoded, 'session')) return false
 
