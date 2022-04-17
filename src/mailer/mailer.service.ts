@@ -1,13 +1,13 @@
 import nodemailer from 'nodemailer'
-import config from 'config'
 import logger from '../core/service/logger.service'
+import { EMAIL_SENDER_ADDRESS, EMAIL_SMTP_HOST, EMAIL_SMTP_PASSWORD, EMAIL_SMTP_PORT, EMAIL_SMTP_USER, FRONTEND_BASE_URL } from '../vars'
 
-const host = config.get<string>('emailSmtpHost')
-const port = config.get<number>('emailSmtpPort')
-const user = config.get<string>('emailSmtpUser')
-const pass = config.get<string>('emailSmtpPassword')
-const from = config.get<string>('emailSenderAddress')
-const frontendBaseUrl = config.get<string>('frontendBaseUrl')
+const host = EMAIL_SMTP_HOST
+const port = EMAIL_SMTP_PORT
+const user = EMAIL_SMTP_USER
+const pass = EMAIL_SMTP_PASSWORD
+const from = EMAIL_SENDER_ADDRESS
+const frontendBaseUrl = FRONTEND_BASE_URL
 
 const smtpTransport = nodemailer.createTransport({
   host,

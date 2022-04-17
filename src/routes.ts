@@ -30,6 +30,7 @@ function routes(app: Express) {
   app.post('/v1/auth/create-admin', requireAdmin, validate(registerSchema), auth.createAdminUser)
   app.post('/v1/auth/create-first-admin', validate(registerSchema), auth.createFirstAdmin)
   app.get('/v1/auth/me', requireUser, auth.getUserUsingToken)
+  app.get('/v1/auth/refresh', auth.getAccessToken)
 
   app.get('/v1/user/:id', user.getOne)
   app.patch('/v1/user/:id', requireUser, user.update)

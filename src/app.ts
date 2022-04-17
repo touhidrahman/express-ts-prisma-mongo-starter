@@ -3,7 +3,6 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-import config from 'config'
 import helmet from 'helmet'
 import cors from 'cors'
 
@@ -19,8 +18,7 @@ import redisClient from './core/db/redis'
 import { createServer } from 'http'
 import { Server, Socket } from 'socket.io'
 import socket from './core/socket/socket'
-
-const port = config.get<number>('port')
+import { PORT } from './vars'
 
 const app = express()
 
@@ -40,13 +38,26 @@ const io = new Server(httpServer, {
   },
 })
 
-httpServer.listen(port, async () => {
+httpServer.listen(PORT, async () => {
   await prisma.$connect()
   await redisClient.connect()
 
-  logger.info(`🚀 App is running at http://localhost:${port}`)
+  logger.info(`🚀 App is running at http://localhost:${PORT}`)
 
   routes(app)
-  swaggerDocs(app, port)
+  swaggerDocs(app, PORT)
   socket({ io })
+})
+
+const signals = ['SIGTERM', 'SIGINT']
+signals.forEach((signal: string) => {
+  process.on(signal, async () => {
+    await prisma.$disconnect()
+    await redisClient.disconnect()
+    await httpServer.close()
+
+    logger.info(`App gracefully shut down on ${signal}`)
+
+    process.exit(0)
+  })
 })

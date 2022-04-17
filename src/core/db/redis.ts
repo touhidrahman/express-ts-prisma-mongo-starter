@@ -1,10 +1,10 @@
-import config from 'config'
 import { createClient } from 'redis'
+import { REDIS_PASSWORD, REDIS_URL } from '../../vars'
 import logger from '../service/logger.service'
 
 const redisClient = createClient({
-  url: config.get<string>('redisUri'),
-  password: config.get<string>('redisPassword'),
+  url: REDIS_URL,
+  password: REDIS_PASSWORD,
 })
 
 redisClient.on('connect', () => {

@@ -1,19 +1,19 @@
-import config from 'config'
 import dayjs from 'dayjs'
 import { get } from 'lodash'
 import { randomId } from '../core/utils/id'
 import { signJwt, verifyJwt } from '../core/service/jwt.service'
 import prisma from '../core/db/prisma'
+import { ACCESS_TOKEN_TTL, REFRESH_TOKEN_TTL } from '../vars'
 
 export function createAccessToken(user: any, sessionId: string): string {
   return signJwt({ ...user, session: sessionId }, 'accessTokenPrivateKey', {
-    expiresIn: config.get('accessTokenTtl') ?? '900s',
+    expiresIn: ACCESS_TOKEN_TTL,
   })
 }
 
 export function createRefreshToken(user: any, sessionId: string): string {
   return signJwt({ ...user, session: sessionId }, 'refreshTokenPrivateKey', {
-    expiresIn: config.get('refreshTokenTtl') ?? '900s',
+    expiresIn: REFRESH_TOKEN_TTL,
   })
 }
 

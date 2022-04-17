@@ -317,3 +317,15 @@ export async function disableUser(req: Request<{ id: string }>, res: Response) {
     return res.status(500).json({ message: error.message })
   }
 }
+
+export async function getAccessToken(req: Request, res: Response) {
+  try {
+    const refreshToken = req.headers['X-Refresh-Token'] as string
+
+    // TODO
+    return res.status(200).json()
+  } catch (error: any) {
+    logger.error(`${logDomain}: Error issuing access token: ${error.message}`)
+    return res.status(500).json({ message: error.message })
+  }
+}

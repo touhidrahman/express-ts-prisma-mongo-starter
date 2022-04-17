@@ -1,18 +1,13 @@
 import S3 from 'aws-sdk/clients/s3'
 import fs from 'fs'
-import config from 'config'
 import dayjs from 'dayjs'
 import { randomId } from '../utils/id'
-
-export const accessKeyId = config.get<string>('awsAccessKeyId')
-export const secretAccessKey = config.get<string>('awsSecretAccessKey')
-export const bucket = config.get<string>('awsBucketName')
-export const region = config.get<string>('awsDefaultRegion')
+import { AWS_DEFAULT_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_BUCKET_NAME } from '../../vars'
 
 export const s3 = new S3({
-  region,
-  accessKeyId,
-  secretAccessKey,
+  region: AWS_DEFAULT_REGION,
+  accessKeyId: AWS_ACCESS_KEY_ID,
+  secretAccessKey: AWS_SECRET_ACCESS_KEY,
 })
 
 export function makeFileName(originalFileName: string, folder = '', subfolder = '') {
@@ -32,7 +27,7 @@ export function uploadS3Object(file: Express.Multer.File, folder = '') {
   const fileStream = fs.createReadStream(file.path)
 
   const uploadParams: S3.PutObjectRequest = {
-    Bucket: bucket ?? '',
+    Bucket: AWS_BUCKET_NAME,
     Key: makeFileName(file.originalname, folder),
     Body: fileStream,
     ContentType: file.mimetype,
@@ -45,7 +40,7 @@ export function uploadS3Object(file: Express.Multer.File, folder = '') {
 // download file
 export function downloadS3Object(fileKey: string) {
   const downloadParams: S3.GetObjectRequest = {
-    Bucket: bucket ?? '',
+    Bucket: AWS_BUCKET_NAME,
     Key: fileKey,
   }
 
@@ -55,7 +50,7 @@ export function downloadS3Object(fileKey: string) {
 // delete file
 export function deleteS3Object(fileKey: string, versionId?: string) {
   const deleteParams: S3.DeleteObjectRequest = {
-    Bucket: bucket ?? '',
+    Bucket: AWS_BUCKET_NAME,
     Key: fileKey,
     VersionId: versionId,
   }

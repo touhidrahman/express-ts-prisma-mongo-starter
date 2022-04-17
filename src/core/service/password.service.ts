@@ -1,8 +1,8 @@
 import bcrypt from 'bcrypt'
-import config from 'config'
+import { SALT_WORK_FACTOR } from '../../vars'
 
 export async function generatePasswordHash(password: string): Promise<string> {
-  const salt = await bcrypt.genSalt(config.get<number>('saltWorkFactor') ?? 10)
+  const salt = await bcrypt.genSalt(SALT_WORK_FACTOR)
 
   return await bcrypt.hashSync(password, salt)
 }

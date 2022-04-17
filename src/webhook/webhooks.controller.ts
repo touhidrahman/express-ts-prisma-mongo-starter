@@ -1,11 +1,11 @@
-import config from 'config'
 import { Request, Response } from 'express'
 import { handleStripeEvent } from './stripe.service'
 import logger from '../core/service/logger.service'
+import { STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET } from '../vars'
 
 const logDomain = 'WEBHOOK'
-const stripe = require('stripe')(config.get<string>('stripeSecretKey'))
-const stripeWebhookSecret = config.get<string>('stripeWebhookSecret')
+const stripe = require('stripe')(STRIPE_SECRET_KEY)
+const stripeWebhookSecret = STRIPE_WEBHOOK_SECRET
 
 export async function webhooksHandler(req: Request, res: Response) {
   if (!stripeWebhookSecret) {

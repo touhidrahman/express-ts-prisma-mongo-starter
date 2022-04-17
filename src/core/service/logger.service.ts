@@ -6,6 +6,9 @@ const defaultLogger = logger({
   level: 'info',
   transport: {
     target: 'pino-pretty',
+    options: {
+      colorize: true,
+    }
   },
   base: {
     pid: false,
