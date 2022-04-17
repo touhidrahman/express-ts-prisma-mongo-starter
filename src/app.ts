@@ -18,14 +18,18 @@ import redisClient from './core/db/redis'
 import { createServer } from 'http'
 import { Server, Socket } from 'socket.io'
 import socket from './core/socket/socket'
-import { PORT } from './vars'
+import { CORS_ORIGIN, PORT, REDIS_URL } from './vars'
+
+const isRedisInUse = !!REDIS_URL
+const isSocketInUse = false
+const isSwaggerInUse = false
 
 const app = express()
 
 app.post('/webhooks', express.raw({ type: 'application/json' }), webhooksHandler)
 
 app.use(express.json())
-app.use(cors())
+app.use(cors({ origin: CORS_ORIGIN, credentials: true }))
 app.use(httpLogger)
 app.use(helmet())
 app.use(rateLimiter)
@@ -40,20 +44,20 @@ const io = new Server(httpServer, {
 
 httpServer.listen(PORT, async () => {
   await prisma.$connect()
-  await redisClient.connect()
+  isRedisInUse && await redisClient.connect()
 
   logger.info(`🚀 App is running at http://localhost:${PORT}`)
 
   routes(app)
-  swaggerDocs(app, PORT)
-  socket({ io })
+  isSwaggerInUse && swaggerDocs(app, PORT)
+  isSocketInUse && socket({ io })
 })
 
 const signals = ['SIGTERM', 'SIGINT']
 signals.forEach((signal: string) => {
   process.on(signal, async () => {
     await prisma.$disconnect()
-    await redisClient.disconnect()
+    isRedisInUse && await redisClient.disconnect()
     await httpServer.close()
 
     logger.info(`App gracefully shut down on ${signal}`)

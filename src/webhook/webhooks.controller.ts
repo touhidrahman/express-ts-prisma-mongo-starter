@@ -5,10 +5,9 @@ import { STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET } from '../vars'
 
 const logDomain = 'WEBHOOK'
 const stripe = require('stripe')(STRIPE_SECRET_KEY)
-const stripeWebhookSecret = STRIPE_WEBHOOK_SECRET
 
 export async function webhooksHandler(req: Request, res: Response) {
-  if (!stripeWebhookSecret) {
+  if (!STRIPE_WEBHOOK_SECRET) {
     logger.error(`${logDomain}: Stripe webhook secret is not defined.`)
     return res.status(500).json({ message: 'Server is not configured for stripe webhooks' })
   }
@@ -16,7 +15,7 @@ export async function webhooksHandler(req: Request, res: Response) {
   let event = req.body
   try {
     const signature = req.headers['stripe-signature']
-    event = stripe.webhooks.constructEvent(req.body, signature, stripeWebhookSecret)
+    event = stripe.webhooks.constructEvent(req.body, signature, STRIPE_WEBHOOK_SECRET)
   } catch (err: any) {
     logger.error(`${logDomain}: Stripe webhook signature verification failed. ${err.message}`)
     return res.sendStatus(400)

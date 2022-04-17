@@ -105,3 +105,16 @@ Authorization: Bearer {{accessToken}}
 
 GET {{host}}/profiles
 Content-Type: application/json
+
+###
+
+POST http://localhost:3000/webhooks
+Content-Type: application/json
+
+{
+  "url": "https://webhook.site/b8f9f8f8-f9f9-4f9f-9f9f-9f9f9f9f9f9f",
+  "events": [
+    "user.created",
+    "user.updated"
+  ]
+}
