@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client'
 import { Request, Response } from 'express'
-import { CommonQueryParams, ConversationQueryParams } from '../../interfaces/query-params'
+import { CommonQueryParams } from '../../interfaces/query-params'
 import logger from '../../logger/logger.service'
 import prisma from '../../db/prisma'
 import { buildResponseMessages } from '../../utils/response-messages.util'
@@ -11,6 +11,11 @@ const service = prisma[entity]
 const resMessages = buildResponseMessages(entity)
 type CreateInput = Prisma.ConversationCreateManyInput
 type UpdateInput = Prisma.ConversationUncheckedUpdateInput
+
+interface ConversationQueryParams extends CommonQueryParams {
+  userId: string
+}
+
 interface CreateMessageInput {
   text: string
   receiverId: string

@@ -6,20 +6,20 @@ import { doCache, fromCache } from '../../redis/redis.service'
 import { buildResponseMessages } from '../../utils/response-messages.util'
 import logger from '../../logger/logger.service'
 
-const entity = 'comment'
+const entity = 'like'
 const logDomain = entity.toUpperCase()
 const service = prismaClient[entity]
 const resMessages = buildResponseMessages(entity)
-type CreateInput = Prisma.CommentCreateManyInput
-type UpdateInput = Prisma.CommentUncheckedUpdateInput
+type CreateInput = Prisma.LikeCreateManyInput
+type UpdateInput = Prisma.LikeUncheckedUpdateInput
 
-interface CommentQueryParams extends CommonQueryParams {
-  postId: string
+interface LikeQueryParams extends CommonQueryParams {
+  userId: string
 }
 
-export async function getMany(req: Request<{}, {}, {}, CommentQueryParams>, res: Response) {
+export async function getMany(req: Request<{}, {}, {}, LikeQueryParams>, res: Response) {
   try {
-    const { postId = '', take = 24, skip = 0, orderBy = 'desc' } = req.query
+    const { userId = '', take = 24, skip = 0, orderBy = 'desc' } = req.query
     const cacheKey = `${entity}:${JSON.stringify(req.query)}`
 
     const cached = await fromCache(cacheKey)
@@ -27,12 +27,12 @@ export async function getMany(req: Request<{}, {}, {}, CommentQueryParams>, res:
 
     const result = await service.findMany({
       where: {
-        post: { id: { equals: postId } }
+        userId: { equals: userId },
       },
       take: Number(take) || undefined,
       skip: Number(skip) || undefined,
       orderBy: {
-        createdAt: orderBy,
+        updatedAt: orderBy,
       },
     })
 
@@ -66,7 +66,7 @@ export async function getOne(req: Request, res: Response) {
     return res.json(result)
   } catch (e: any) {
     logger.error(`${logDomain}: ${resMessages.notFound}. ${e.message}`)
-    return res.status(400).json({ message: e.message })
+    return res.status(500).json({ message: e.message })
   }
 }
 
@@ -78,7 +78,7 @@ export async function create(req: Request<{}, {}, CreateInput>, res: Response) {
     const result = await service.create({
       data: {
         ...data,
-        authorId: user.id,
+        userId: user.id,
       },
     })
 

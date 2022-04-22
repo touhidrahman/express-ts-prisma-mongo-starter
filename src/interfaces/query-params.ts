@@ -6,6 +6,3 @@ export interface CommonQueryParams {
   published?: boolean
 }
 
-export interface ConversationQueryParams extends CommonQueryParams {
-    userId: string
-}

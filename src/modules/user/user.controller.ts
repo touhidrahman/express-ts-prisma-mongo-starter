@@ -1,17 +1,15 @@
-import { Prisma, User } from '@prisma/client'
+import { User } from '@prisma/client'
 import { Request, Response } from 'express'
-import logger from '../../logger/logger.service'
 import prisma from '../../db/prisma'
-import { buildResponseMessages } from '../../utils/response-messages.util'
 import { CommonQueryParams } from '../../interfaces/query-params'
-import { fromCache, doCache } from '../../redis/redis.service'
+import logger from '../../logger/logger.service'
+import { doCache, fromCache } from '../../redis/redis.service'
+import { buildResponseMessages } from '../../utils/response-messages.util'
 
 const entity = 'user'
 const logDomain = entity.toUpperCase()
 const service = prisma[entity]
 const resMessages = buildResponseMessages(entity)
-type CreateInput = Prisma.UserCreateManyInput
-type UpdateInput = Prisma.UserUncheckedUpdateInput
 
 function getSafeUser(user: User): any {
   return {

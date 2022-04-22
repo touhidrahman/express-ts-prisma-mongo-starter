@@ -5,6 +5,7 @@ import * as conversation from './modules/conversation/conversation.controller'
 import * as user from './modules/user/user.controller'
 import * as post from './modules/post/post.controller'
 import * as comment from './modules/comment/comment.controller'
+import * as like from './modules/like/like.controller'
 import { checkToken } from './middleware/check-token'
 import { requireAdmin, requireUser } from './middleware/require-user'
 import { uploadLocal, uploadS3 } from './middleware/upload'
@@ -55,6 +56,12 @@ function routes(app: Express) {
   app.post('/v1/comment', requireUser, comment.create)
   app.patch('/v1/comment/:id', requireUser, comment.update)
   app.delete('/v1/comment/:id', requireUser, comment.deleteOne)
+
+  app.get('/v1/like', like.getMany)
+  app.get('/v1/like/:id', like.getOne)
+  app.post('/v1/like', requireUser, like.create)
+  app.patch('/v1/like/:id', requireUser, like.update)
+  app.delete('/v1/like/:id', requireUser, like.deleteOne)
 
   app.get('/v1/conversation', conversation.getMany)
   app.get('/v1/conversation/:id/messages', conversation.getMessages)

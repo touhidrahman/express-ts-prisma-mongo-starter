@@ -1,11 +1,12 @@
-@host=http://localhost:3000/v1
-@accessToken=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyNjI3Y2IzZDBkNzhjODZiMzc4NmJkMSIsImNyZWF0ZWRBdCI6IjIwMjItMDQtMjJUMTA6MDA6MTkuNjg5WiIsInVwZGF0ZWRBdCI6IjIwMjItMDQtMjJUMTA6MDA6MTkuNjg5WiIsImVtYWlsIjoiYUBiLmNvbSIsImZpcnN0TmFtZSI6IkEiLCJsYXN0TmFtZSI6IkIiLCJpbWFnZSI6bnVsbCwiYmlydGhEYXRlIjpudWxsLCJyb2xlIjoiQURNSU4iLCJlbWFpbFZlcmlmaWVkIjpmYWxzZSwiZGlzYWJsZWQiOmZhbHNlLCJiaW8iOm51bGwsImdlbmRlciI6bnVsbCwiY2l0eSI6bnVsbCwiY291bnRyeSI6bnVsbCwic2Vzc2lvbiI6IjYyNjI3ZjdmMzQxMWVmZTY3Y2QzZTFjOSIsImlhdCI6MTY1MDYyMjMzNSwiZXhwIjoxNjUwNjIzMjM1fQ.B8r1W3gXDDz1WOFiH8p3iUfBazzL9vaP-6pbiVIrMgTHUKymw_5FnU323LLTf1nv5rIruSPS6-PBprrWGpU3bJypofqP0bSMHUHAXAA9da-c2cOySDEqABVB6jQMUTIGpT6KlO1UoVIF0P4uRX5UfxMPP8eTqHSHUCmyqeTLz5I
+@host=http://localhost:3000
+@currentUserId=62627cb3d0d78c86b3786bd1
+@accessToken=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyNjI3Y2IzZDBkNzhjODZiMzc4NmJkMSIsImNyZWF0ZWRBdCI6IjIwMjItMDQtMjJUMTA6MDA6MTkuNjg5WiIsInVwZGF0ZWRBdCI6IjIwMjItMDQtMjJUMTA6MDA6MTkuNjg5WiIsImVtYWlsIjoiYUBiLmNvbSIsImZpcnN0TmFtZSI6IkEiLCJsYXN0TmFtZSI6IkIiLCJpbWFnZSI6bnVsbCwiYmlydGhEYXRlIjpudWxsLCJyb2xlIjoiQURNSU4iLCJlbWFpbFZlcmlmaWVkIjpmYWxzZSwiZGlzYWJsZWQiOmZhbHNlLCJiaW8iOm51bGwsImdlbmRlciI6bnVsbCwiY2l0eSI6bnVsbCwiY291bnRyeSI6bnVsbCwic2Vzc2lvbiI6IjYyNjI4NmE5ZjMzNzk2MTFjZmMzMjA1MiIsImlhdCI6MTY1MDYyNDE2OSwiZXhwIjoxNjgyMTgxNzY5fQ.Nw44lc7cP2IKWUbZtCtWJS6tfx9xHOS6V3djC8BQgOL-Web-OG-OARQTXi_S2OW-duJxqFosWa1DT9vnMqmCZ-5u0nDaH62hAZ76OU96Z0BraUSttML9mI_NhtZdrc3iPIzBx9MH6NuiM3RKcmYx91LGIWSAEfvUphz0QJDayJ8
 
-@refreshToken=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyNjI3Y2IzZDBkNzhjODZiMzc4NmJkMSIsImNyZWF0ZWRBdCI6IjIwMjItMDQtMjJUMTA6MDA6MTkuNjg5WiIsInVwZGF0ZWRBdCI6IjIwMjItMDQtMjJUMTA6MDA6MTkuNjg5WiIsImVtYWlsIjoiYUBiLmNvbSIsImZpcnN0TmFtZSI6IkEiLCJsYXN0TmFtZSI6IkIiLCJpbWFnZSI6bnVsbCwiYmlydGhEYXRlIjpudWxsLCJyb2xlIjoiQURNSU4iLCJlbWFpbFZlcmlmaWVkIjpmYWxzZSwiZGlzYWJsZWQiOmZhbHNlLCJiaW8iOm51bGwsImdlbmRlciI6bnVsbCwiY2l0eSI6bnVsbCwiY291bnRyeSI6bnVsbCwic2Vzc2lvbiI6IjYyNjI3ZjdmMzQxMWVmZTY3Y2QzZTFjOSIsImlhdCI6MTY1MDYyMjMzNSwiZXhwIjoxNjgyMTc5OTM1fQ.IPFIv0CIq_Y3A54qZ85HGi6ENLRztFNJOLGx3pFHvHVZTcDqKxj2ON5-SPaLY5ukAMXqmCLNw221l9asPzHuSW92G4pEgp7gtSufqcVWhuYtYhsHK7ax2GEm9J4QNIZzgVZ4w8ZltXxzGpctLIlRlISSdXkvM0vikKohN0_e4qo
+@refreshToken=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyNjI3Y2IzZDBkNzhjODZiMzc4NmJkMSIsImNyZWF0ZWRBdCI6IjIwMjItMDQtMjJUMTA6MDA6MTkuNjg5WiIsInVwZGF0ZWRBdCI6IjIwMjItMDQtMjJUMTA6MDA6MTkuNjg5WiIsImVtYWlsIjoiYUBiLmNvbSIsImZpcnN0TmFtZSI6IkEiLCJsYXN0TmFtZSI6IkIiLCJpbWFnZSI6bnVsbCwiYmlydGhEYXRlIjpudWxsLCJyb2xlIjoiQURNSU4iLCJlbWFpbFZlcmlmaWVkIjpmYWxzZSwiZGlzYWJsZWQiOmZhbHNlLCJiaW8iOm51bGwsImdlbmRlciI6bnVsbCwiY2l0eSI6bnVsbCwiY291bnRyeSI6bnVsbCwic2Vzc2lvbiI6IjYyNjI4NmE5ZjMzNzk2MTFjZmMzMjA1MiIsImlhdCI6MTY1MDYyNDE2OSwiZXhwIjoxNjgyMTgxNzY5fQ.U7D2_wC-J_GEwlTYOSV3JHJp4OacPwJVQWpNTH31h-5Z-jbZtMJ4rebCP2OljIBFXpLqbQdeO_tm6lsPe6eo2TeScVgmwpTH-gltyS6b3YmlGEKScoX_GQwhs87RO3R4S0nRDyXFyw3c-vYrjLcmmdX0R_xFVlmiXHDmQeLPDHA
 
 
 
-POST {{host}}/auth/register
+POST {{host}}/v1/auth/register
 Content-Type: application/json
 
 {
@@ -19,7 +20,7 @@ Content-Type: application/json
 ###
 
 
-POST {{host}}/auth/create-first-admin
+POST {{host}}/v1/auth/create-first-admin
 Content-Type: application/json
 
 {
@@ -33,7 +34,7 @@ Content-Type: application/json
 ###
 
 
-POST {{host}}/auth/create-admin
+POST {{host}}/v1/auth/create-admin
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -47,7 +48,7 @@ Authorization: Bearer {{accessToken}}
 
 ### LOGIN
 
-POST {{host}}/auth/login
+POST {{host}}/v1/auth/login
 Content-Type: application/json
 
 {
@@ -57,7 +58,7 @@ Content-Type: application/json
 
 ###
 
-POST {{host}}/auth/forgot-password
+POST {{host}}/v1/auth/forgot-password
 Content-Type: application/json
 
 {
@@ -66,7 +67,7 @@ Content-Type: application/json
 
 ###
 
-POST {{host}}/auth/reset-password/r1wm2vbeax239csn7roepf2seq9e636q87uoy1zk
+POST {{host}}/v1/auth/reset-password/r1wm2vbeax239csn7roepf2seq9e636q87uoy1zk
 Content-Type: application/json
 
 {
@@ -76,7 +77,7 @@ Content-Type: application/json
 
 ###
 
-POST {{host}}/auth/change-password
+POST {{host}}/v1/auth/change-password
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -87,13 +88,13 @@ Authorization: Bearer {{accessToken}}
 
 ###
 
-POST {{host}}/auth/change-email/60f335bf00b32ef000bd9a94/confirm/kpzsaaq2l28o1y8b5zdzjb85i6acve1z1pa702z5
+POST {{host}}/v1/auth/change-email/60f335bf00b32ef000bd9a94/confirm/kpzsaaq2l28o1y8b5zdzjb85i6acve1z1pa702z5
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 ###
 
-POST {{host}}/auth/change-email/60f335bf00b32ef000bd9a94
+POST {{host}}/v1/auth/change-email/60f335bf00b32ef000bd9a94
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -103,12 +104,12 @@ Authorization: Bearer {{accessToken}}
 
 ### POST
 
-GET {{host}}/post
+GET {{host}}/v1/post
 Content-Type: application/json
 
 ###
 
-POST {{host}}/post
+POST {{host}}/v1/post
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -119,12 +120,12 @@ Authorization: Bearer {{accessToken}}
 
 ### COMMENT
 
-GET {{host}}/comment
+GET {{host}}/v1/comment
 Content-Type: application/json
 
 ###
 
-POST {{host}}/comment
+POST {{host}}/v1/comment
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -133,10 +134,25 @@ Authorization: Bearer {{accessToken}}
   "postId": "626280765387bc01f2f47d74"
 }
 
+### LIKE
+
+GET {{host}}/v1/like?userId={{currentUserId}}
+Content-Type: application/json
+
+###
+
+POST {{host}}/v1/like
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "postId": "626280765387bc01f2f47d74"
+}
+
 
 ### WEBHOOKS
 
-POST http://localhost:3000/webhooks
+POST {{host}}/webhooks
 Content-Type: application/json
 
 {
