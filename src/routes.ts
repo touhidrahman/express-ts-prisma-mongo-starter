@@ -3,6 +3,8 @@ import * as asset from './modules/asset/asset.controller'
 import * as auth from './modules/auth/auth.controller'
 import * as conversation from './modules/conversation/conversation.controller'
 import * as user from './modules/user/user.controller'
+import * as post from './modules/post/post.controller'
+import * as comment from './modules/comment/comment.controller'
 import { checkToken } from './middleware/check-token'
 import { requireAdmin, requireUser } from './middleware/require-user'
 import { uploadLocal, uploadS3 } from './middleware/upload'
@@ -34,13 +36,25 @@ function routes(app: Express) {
   app.get('/v1/user', user.getMany)
   app.get('/v1/user/:id', user.getOne)
   app.patch('/v1/user/:id', requireUser, user.update)
-  app.delete('/v1/profiles/:id', requireAdmin, user.deleteOne)
+  app.delete('/v1/user/:id', requireAdmin, user.deleteOne)
 
   app.get('/v1/assets', validate(assetQuerySchema), asset.getAssetHandler)
   app.post('/v1/assets', requireUser, uploadLocal.single('file'), asset.uploadAssetHandler)
   app.post('/v1/assets-multi', requireUser, uploadS3.array('files'), asset.uploadMultipleAssetHandler)
   app.delete('/v1/assets', validate(assetQuerySchema), requireUser, asset.deleteAssetHandler)
   app.get('/v1/download', validate(assetQuerySchema), requireUser, asset.downloadAssetHandler)
+
+  app.get('/v1/post', post.getMany)
+  app.get('/v1/post/:id', post.getOne)
+  app.post('/v1/post', requireUser, post.create)
+  app.patch('/v1/post/:id', requireUser, post.update)
+  app.delete('/v1/post/:id', requireUser, post.deleteOne)
+
+  app.get('/v1/comment', comment.getMany)
+  app.get('/v1/comment/:id', comment.getOne)
+  app.post('/v1/comment', requireUser, comment.create)
+  app.patch('/v1/comment/:id', requireUser, comment.update)
+  app.delete('/v1/comment/:id', requireUser, comment.deleteOne)
 
   app.get('/v1/conversation', conversation.getMany)
   app.get('/v1/conversation/:id/messages', conversation.getMessages)

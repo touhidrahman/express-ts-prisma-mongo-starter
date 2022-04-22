@@ -1,24 +1,17 @@
-import { Prisma, User } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 import { Request, Response } from 'express'
-import logger from '../../logger/logger.service'
-import prisma from '../../db/prisma'
-import { buildResponseMessages } from '../../utils/response-messages.util'
+import prismaClient from '../../db/prisma'
 import { CommonQueryParams } from '../../interfaces/query-params'
-import { fromCache, doCache } from '../../redis/redis.service'
+import { doCache, fromCache } from '../../redis/redis.service'
+import { buildResponseMessages } from '../../utils/response-messages.util'
+import logger from '../../logger/logger.service'
 
-const entity = 'user'
+const entity = 'post'
 const logDomain = entity.toUpperCase()
-const service = prisma[entity]
+const service = prismaClient[entity]
 const resMessages = buildResponseMessages(entity)
-type CreateInput = Prisma.UserCreateManyInput
-type UpdateInput = Prisma.UserUncheckedUpdateInput
-
-function getSafeUser(user: User): any {
-  return {
-    ...user,
-    password: undefined,
-  }
-}
+type CreateInput = Prisma.PostCreateManyInput
+type UpdateInput = Prisma.PostUncheckedUpdateInput
 
 export async function getMany(req: Request<{}, {}, {}, CommonQueryParams>, res: Response) {
   try {
@@ -33,8 +26,7 @@ export async function getMany(req: Request<{}, {}, {}, CommonQueryParams>, res: 
         ...(search
           ? {
               OR: [
-                { firstName: { contains: search, mode: 'insensitive' } },
-                { lastName: { contains: search, mode: 'insensitive' } },
+                { title: { contains: search, mode: 'insensitive' } },
               ],
             }
           : {}),
@@ -46,9 +38,7 @@ export async function getMany(req: Request<{}, {}, {}, CommonQueryParams>, res: 
       },
     })
 
-    const safeResult = result.map((x) => getSafeUser(x))
-
-    await doCache(cacheKey, safeResult)
+    await doCache(cacheKey, result)
 
     res.send(result)
   } catch (error: any) {
@@ -65,38 +55,60 @@ export async function getOne(req: Request, res: Response) {
     const cached = await fromCache(cacheKey)
     if (cached) return res.json(cached)
 
-    const user = await service.findUnique({
+    const result = await service.findUnique({
       where: { id },
     })
 
-    if (!user) {
+    if (!result) {
       return res.status(400).send({ message: resMessages.notFound })
     }
 
-    const safeResult = getSafeUser(user)
-    await doCache(cacheKey, safeResult)
+    await doCache(cacheKey, result)
 
-    return res.json(safeResult)
+    return res.json(result)
   } catch (e: any) {
     logger.error(`${logDomain}: ${resMessages.notFound}. ${e.message}`)
     return res.status(400).json({ message: e.message })
   }
 }
 
-export async function update(req: Request, res: Response) {
+export async function create(req: Request<{}, {}, CreateInput>, res: Response) {
   try {
-    const user = await prisma.user.update({
-      where: { id: req.params.id },
-      data: { ...req.body },
-    })
-    if (!user) {
-      return res.status(400).send({ message: resMessages.notFound })
-    }
+    const data = req.body
+    const user = res.locals.user
 
-    return res.json(getSafeUser(user))
-  } catch (e: any) {
-    logger.error(`${logDomain}: ${resMessages.updateFailed} ${e.message}`)
-    return res.status(400).json({ message: e.message })
+    const result = await service.create({
+      data: {
+        ...data,
+        authorId: user.id,
+      },
+    })
+
+    logger.info(`${logDomain}: ${resMessages.created}.`)
+    res.send(result)
+  } catch (error: any) {
+    logger.error(`${logDomain}: ${resMessages.createFailed}. ${error.message}`)
+    res.status(500).send({ message: resMessages.createFailed })
+  }
+}
+
+export async function update(req: Request<{ id: string }, {}, UpdateInput>, res: Response) {
+  try {
+    const { id } = req.params
+    const data = req.body
+
+    const result = await service.update({
+      where: { id },
+      data: {
+        ...data,
+      },
+    })
+
+    logger.info(`${logDomain}: ${resMessages.updated}.`)
+    res.send(result)
+  } catch (error: any) {
+    logger.error(`${logDomain}: ${resMessages.updateFailed}. ${error.message}`)
+    res.status(500).send({ message: resMessages.updateFailed })
   }
 }
 
