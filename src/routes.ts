@@ -2,7 +2,6 @@ import { Express, Request, Response } from 'express'
 import * as asset from './modules/asset/asset.controller'
 import * as auth from './modules/auth/auth.controller'
 import * as conversation from './modules/conversation/conversation.controller'
-import * as profile from './modules/profile/profile.controller'
 import * as user from './modules/user/user.controller'
 import { checkToken } from './middleware/check-token'
 import { requireAdmin, requireUser } from './middleware/require-user'
@@ -32,20 +31,16 @@ function routes(app: Express) {
   app.get('/v1/auth/me', requireUser, auth.getUserUsingToken)
   app.get('/v1/auth/refresh', auth.getAccessToken)
 
+  app.get('/v1/user', user.getMany)
   app.get('/v1/user/:id', user.getOne)
   app.patch('/v1/user/:id', requireUser, user.update)
+  app.delete('/v1/profiles/:id', requireAdmin, user.deleteOne)
 
   app.get('/v1/assets', validate(assetQuerySchema), asset.getAssetHandler)
   app.post('/v1/assets', requireUser, uploadLocal.single('file'), asset.uploadAssetHandler)
   app.post('/v1/assets-multi', requireUser, uploadS3.array('files'), asset.uploadMultipleAssetHandler)
   app.delete('/v1/assets', validate(assetQuerySchema), requireUser, asset.deleteAssetHandler)
   app.get('/v1/download', validate(assetQuerySchema), requireUser, asset.downloadAssetHandler)
-
-  app.get('/v1/profiles', profile.getMany)
-  app.get('/v1/profiles/:id', profile.getOne)
-  app.post('/v1/profiles', requireUser, profile.create)
-  app.patch('/v1/profiles/:id', requireUser, profile.update)
-  app.delete('/v1/profiles/:id', requireUser, profile.deleteOne)
 
   app.get('/v1/conversation', conversation.getMany)
   app.get('/v1/conversation/:id/messages', conversation.getMessages)

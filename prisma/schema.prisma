@@ -1,5 +1,5 @@
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -52,17 +52,22 @@ model User {
   role          UserRole  @default(USER)
   emailVerified Boolean   @default(false)
   disabled      Boolean   @default(false)
+  bio           String?
+  gender        Gender?
+  city          String?
+  country       String?
 
   emailChange           EmailChange?
   emailVerification     EmailVerification?
   passwordReset         PasswordReset?
-  profile               Profile?
   sessions              Session[]
   likes                 Like[]
+  posts                 Post[]
   sentConversations     Conversation[]     @relation("sentConversations")
   sentMessages          Message[]          @relation("sentMessages")
   receivedConversations Conversation[]     @relation("receivedConversations")
   receivedMessages      Message[]          @relation("receivedMessages")
+  comments              Comment[]
 }
 
 model Session {
@@ -90,23 +95,31 @@ model Asset {
 
 // Models for your application
 
-model Profile {
+model Post {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  bio         String?
-  gender      Gender
-  city        String?
-  country     String?
-  expiryDate  DateTime?
-  package     ProductPackage
-  publishDate DateTime       @default(now())
-  published   Boolean        @default(false)
-  userId      String?        @unique
+  title    String
+  content  String
+  authorId String    @db.ObjectId
+  likes    Like[]
+  comments Comment[]
 
-  likes Like[]
-  user  User?  @relation(fields: [userId], references: [id])
+  author User @relation(fields: [authorId], references: [id])
+}
+
+model Comment {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  content  String
+  authorId String @db.ObjectId
+  postId   String @db.ObjectId
+
+  author User @relation(fields: [authorId], references: [id])
+  post   Post @relation(fields: [postId], references: [id])
 }
 
 model Like {
@@ -114,11 +127,11 @@ model Like {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  userId    String @db.ObjectId
-  profileId String @db.ObjectId
+  userId String @db.ObjectId
+  postId String @db.ObjectId
 
-  user    User    @relation(fields: [userId], references: [id])
-  profile Profile @relation(fields: [profileId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+  post Post @relation(fields: [postId], references: [id])
 }
 
 model Conversation {
@@ -152,11 +165,4 @@ model Message {
 enum Gender {
   Male
   Female
-}
-
-enum ProductPackage {
-  Free
-  Bronze
-  Silver
-  Gold
 }
