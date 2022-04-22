@@ -20,6 +20,7 @@ import { Server, Socket } from 'socket.io'
 import socket from './socket/socket'
 import { CORS_ORIGIN, PORT, REDIS_URL } from './vars'
 
+// features
 const isRedisInUse = !!REDIS_URL
 const isSocketInUse = false
 const isSwaggerInUse = false

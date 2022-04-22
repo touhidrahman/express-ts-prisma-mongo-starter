@@ -1,21 +1,16 @@
 import { Request, Response } from 'express'
+import prisma from '../../db/prisma'
+import logger from '../../logger/logger.service'
+import { createUser, validatePassword } from '../user/user.service'
+import { sendPasswordResetEmail, sendPasswordResetSuccessEmail, sendUserEmailChangeEmail, sendWelcomeEmail } from './auth-mails.service'
 import { SignupInput } from './auth.schema'
 import {
   createAccessToken,
   createOrUpdateEmailChangeRecord,
   createOrUpdateEmailVerificationRecord,
   createOrUpdatePasswordResetRecord,
-  createRefreshToken,
+  createRefreshToken
 } from './auth.service'
-import {
-  sendPasswordResetEmail,
-  sendPasswordResetSuccessEmail,
-  sendUserEmailChangeEmail,
-  sendWelcomeEmail,
-} from '../mailer/mailer.service'
-import { createUser, validatePassword } from '../user/user.service'
-import logger from '../../logger/logger.service'
-import prisma from '../../db/prisma'
 import { generatePasswordHash } from './password.service'
 
 const logDomain = 'AUTH'
