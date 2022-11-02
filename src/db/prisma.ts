@@ -1,3 +1,7 @@
 import { PrismaClient } from '@prisma/client'
+import cacheMiddleware from './cache.middleware'
 
-export default new PrismaClient()
+const prisma = new PrismaClient()
+prisma.$use(cacheMiddleware)
+
+export default prisma

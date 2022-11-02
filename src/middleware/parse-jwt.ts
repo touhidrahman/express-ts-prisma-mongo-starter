@@ -4,7 +4,8 @@ import { verifyJwt } from '../modules/auth/jwt.service'
 import { reIssueAccessToken } from '../modules/auth/auth.service'
 
 const deserializeUser = async (req: Request, res: Response, next: NextFunction) => {
-  const accessToken = get(req, 'headers.authorization', '').replace(/^Bearer\s/, '')
+  const authHeader = req?.headers?.authorization ?? ''
+  const accessToken = authHeader.replace(/^Bearer\s/, '')
 
   if (!accessToken) {
     return next()
@@ -19,7 +20,7 @@ const deserializeUser = async (req: Request, res: Response, next: NextFunction) 
 
   const refreshToken = get(req, 'headers.x-refresh')
 
-  if (expired && refreshToken) {
+  if (expired && refreshToken && typeof refreshToken === 'string') {
     const newAccessToken = await reIssueAccessToken({ refreshToken })
 
     if (newAccessToken) {

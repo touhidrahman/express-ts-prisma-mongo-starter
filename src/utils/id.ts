@@ -1,5 +1,9 @@
-import { customAlphabet } from 'nanoid'
+import * as crypto from 'crypto'
 
-export function randomId(n = 10): string {
-  return customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789', n)()
+export function randomUUID(): string {
+  return crypto.randomUUID()
+}
+
+export function randomId(n = 16): string {
+  return crypto.randomBytes(n).toString('hex').slice(0, n)
 }

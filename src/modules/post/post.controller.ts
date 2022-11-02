@@ -2,7 +2,6 @@ import { Prisma } from '@prisma/client'
 import { Request, Response } from 'express'
 import prismaClient from '../../db/prisma'
 import { CommonQueryParams } from '../../interfaces/query-params'
-import { doCache, fromCache } from '../../redis/redis.service'
 import { buildResponseMessages } from '../../utils/response-messages.util'
 import logger from '../../logger/logger.service'
 
@@ -16,10 +15,6 @@ type UpdateInput = Prisma.PostUncheckedUpdateInput
 export async function getMany(req: Request<{}, {}, {}, CommonQueryParams>, res: Response) {
   try {
     const { search = '', take = 24, skip = 0, orderBy = 'asc' } = req.query
-    const cacheKey = `${entity}:${JSON.stringify(req.query)}`
-
-    const cached = await fromCache(cacheKey)
-    if (cached) return res.json(cached)
 
     const result = await service.findMany({
       where: {
@@ -38,8 +33,6 @@ export async function getMany(req: Request<{}, {}, {}, CommonQueryParams>, res: 
       },
     })
 
-    await doCache(cacheKey, result)
-
     res.send(result)
   } catch (error: any) {
     logger.error(`${logDomain}: ${error.message}`)
@@ -50,10 +43,6 @@ export async function getMany(req: Request<{}, {}, {}, CommonQueryParams>, res: 
 export async function getOne(req: Request, res: Response) {
   try {
     const { id } = req.params
-    const cacheKey = `${entity}:${id}`
-
-    const cached = await fromCache(cacheKey)
-    if (cached) return res.json(cached)
 
     const result = await service.findUnique({
       where: { id },
@@ -62,8 +51,6 @@ export async function getOne(req: Request, res: Response) {
     if (!result) {
       return res.status(400).send({ message: resMessages.notFound })
     }
-
-    await doCache(cacheKey, result)
 
     return res.json(result)
   } catch (e: any) {

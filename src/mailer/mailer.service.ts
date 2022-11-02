@@ -25,6 +25,10 @@ export async function sendMail(to: string, subject: string, text: string, html: 
     text,
     html,
   }
-  const sendResult = await smtpTransport.sendMail(mailOptions)
-  logger.info(`EMAIL: Email sent: ${sendResult.messageId}`)
+  try {
+    const sendResult = await smtpTransport.sendMail(mailOptions)
+    logger.info(`EMAIL: Email sent: ${sendResult.messageId}`)
+  } catch (error) {
+    throw new Error(`EMAIL: Error sending email: ${error}`)
+  }
 }

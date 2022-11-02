@@ -3,7 +3,6 @@ import { Request, Response } from 'express'
 import prisma from '../../db/prisma'
 import { CommonQueryParams } from '../../interfaces/query-params'
 import logger from '../../logger/logger.service'
-import { doCache, fromCache } from '../../redis/redis.service'
 import { buildResponseMessages } from '../../utils/response-messages.util'
 
 const entity = 'user'
@@ -21,10 +20,6 @@ function getSafeUser(user: User): any {
 export async function getMany(req: Request<{}, {}, {}, CommonQueryParams>, res: Response) {
   try {
     const { search = '', take = 24, skip = 0, orderBy = 'asc' } = req.query
-    const cacheKey = `${entity}:${JSON.stringify(req.query)}`
-
-    const cached = await fromCache(cacheKey)
-    if (cached) return res.json(cached)
 
     const result = await service.findMany({
       where: {
@@ -46,8 +41,6 @@ export async function getMany(req: Request<{}, {}, {}, CommonQueryParams>, res: 
 
     const safeResult = result.map((x) => getSafeUser(x))
 
-    await doCache(cacheKey, safeResult)
-
     res.send(result)
   } catch (error: any) {
     logger.error(`${logDomain}: ${error.message}`)
@@ -58,10 +51,6 @@ export async function getMany(req: Request<{}, {}, {}, CommonQueryParams>, res: 
 export async function getOne(req: Request, res: Response) {
   try {
     const { id } = req.params
-    const cacheKey = `${entity}:${id}`
-
-    const cached = await fromCache(cacheKey)
-    if (cached) return res.json(cached)
 
     const user = await service.findUnique({
       where: { id },
@@ -72,7 +61,6 @@ export async function getOne(req: Request, res: Response) {
     }
 
     const safeResult = getSafeUser(user)
-    await doCache(cacheKey, safeResult)
 
     return res.json(safeResult)
   } catch (e: any) {

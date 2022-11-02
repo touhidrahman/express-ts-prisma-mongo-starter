@@ -18,10 +18,9 @@ import redisClient from './redis/redis'
 import { createServer } from 'http'
 import { Server, Socket } from 'socket.io'
 import socket from './socket/socket'
-import { CORS_ORIGIN, PORT, REDIS_URL } from './vars'
+import { CORS_ORIGIN, PORT } from './vars'
 
 // features
-const isRedisInUse = !!REDIS_URL
 const isSocketInUse = false
 const isSwaggerInUse = false
 
@@ -45,7 +44,6 @@ const io = new Server(httpServer, {
 
 httpServer.listen(PORT, async () => {
   await prisma.$connect()
-  isRedisInUse && await redisClient.connect()
 
   logger.info(`🚀 App is running at http://localhost:${PORT}`)
 
@@ -58,7 +56,7 @@ const signals = ['SIGTERM', 'SIGINT']
 signals.forEach((signal: string) => {
   process.on(signal, async () => {
     await prisma.$disconnect()
-    isRedisInUse && await redisClient.disconnect()
+    await redisClient.disconnect()
     await httpServer.close()
 
     logger.info(`App gracefully shut down on ${signal}`)

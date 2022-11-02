@@ -1,18 +1,15 @@
-import { createClient } from 'redis'
-import { REDIS_PASSWORD, REDIS_URL } from '../vars'
+import Redis from 'ioredis'
 import logger from '../logger/logger.service'
+import { REDIS_URL } from '../vars'
 
-const redisClient = createClient({
-  url: REDIS_URL,
-  password: REDIS_PASSWORD,
-})
+const redisClient = new Redis(REDIS_URL)
 
 redisClient.on('connect', () => {
-  logger.info(`Redis connection established`)
+  logger.info(`REDIS: connection established`)
 })
 
 redisClient.on('error', (error) => {
-  logger.error(`Redis error, service degraded: ${error}`)
+  logger.error(`REDIS:Connection error: ${error}`)
 })
 
 export default redisClient
