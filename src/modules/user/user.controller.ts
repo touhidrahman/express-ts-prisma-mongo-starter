@@ -3,7 +3,7 @@ import { Request, Response } from 'express'
 import prisma from '../../db/prisma'
 import { CommonQueryParams } from '../../interfaces/query-params'
 import logger from '../../logger/logger.service'
-import { doCache, fromCache } from '../../redis/redis.service'
+import { doCache, fromCache } from '../../cache/cache.service'
 import { buildResponseMessages } from '../../utils/response-messages.util'
 
 const entity = 'user'

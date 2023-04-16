@@ -1,7 +1,7 @@
-import { Prisma, UserRole } from '@prisma/client'
-import { omit } from 'lodash'
-import { LoginInput, SignupInput } from '../auth/auth.schema'
+import { UserRole } from '@prisma/client'
+import { omit } from 'radash'
 import prisma from '../../db/prisma'
+import { LoginInput, SignupInput } from '../auth/auth.schema'
 import { comparePassword, generatePasswordHash } from '../auth/password.service'
 
 export async function createUser(input: SignupInput & { role?: UserRole }) {
@@ -24,7 +24,7 @@ export async function createUser(input: SignupInput & { role?: UserRole }) {
       },
     })
 
-    return omit(user, 'password')
+    return omit(user, ['password'])
   } catch (e: any) {
     throw new Error(e)
   }
@@ -43,5 +43,5 @@ export async function validatePassword(input: LoginInput) {
 
   if (!isValid) return false
 
-  return omit(user, 'password')
+  return omit(user, ['password'])
 }

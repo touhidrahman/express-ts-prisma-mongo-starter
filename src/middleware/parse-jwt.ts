@@ -1,10 +1,10 @@
-import { get } from 'lodash'
+import { get } from 'radash'
 import { Request, Response, NextFunction } from 'express'
 import { verifyJwt } from '../modules/auth/jwt.service'
 import { reIssueAccessToken } from '../modules/auth/auth.service'
 
 const deserializeUser = async (req: Request, res: Response, next: NextFunction) => {
-  const accessToken = get(req, 'headers.authorization', '').replace(/^Bearer\s/, '')
+  const accessToken = get(req, 'headers.authorization', '')?.replace(/^Bearer\s/, '')
 
   if (!accessToken) {
     return next()
@@ -20,7 +20,7 @@ const deserializeUser = async (req: Request, res: Response, next: NextFunction) 
   const refreshToken = get(req, 'headers.x-refresh')
 
   if (expired && refreshToken) {
-    const newAccessToken = await reIssueAccessToken({ refreshToken })
+    const newAccessToken = await reIssueAccessToken({ refreshToken: refreshToken as string })
 
     if (newAccessToken) {
       res.setHeader('x-access-token', newAccessToken)

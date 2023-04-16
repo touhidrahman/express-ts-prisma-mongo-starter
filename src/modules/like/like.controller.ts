@@ -2,7 +2,7 @@ import { Prisma } from '@prisma/client'
 import { Request, Response } from 'express'
 import prismaClient from '../../db/prisma'
 import { CommonQueryParams } from '../../interfaces/query-params'
-import { doCache, fromCache } from '../../redis/redis.service'
+import { doCache, fromCache } from '../../cache/cache.service'
 import { buildResponseMessages } from '../../utils/response-messages.util'
 import logger from '../../logger/logger.service'
 

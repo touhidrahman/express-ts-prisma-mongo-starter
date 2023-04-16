@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import { get } from 'lodash'
+import { get } from 'radash'
 import { randomId } from '../../utils/id'
 import { signJwt, verifyJwt } from './jwt.service'
 import prisma from '../../db/prisma'
@@ -23,7 +23,7 @@ export async function reIssueAccessToken({ refreshToken }: { refreshToken: strin
   if (!decoded || !get(decoded, 'session')) return false
 
   const session = await prisma.session.findUnique({
-    where: { id: get(decoded, 'session') },
+    where: { id: get(decoded, 'session') as string },
   })
 
   if (!session || !session.valid) return false

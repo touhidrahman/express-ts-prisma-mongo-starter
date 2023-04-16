@@ -5,6 +5,7 @@ const httpLogger = PinoHttp({
   logger: defaultLogger,
   customLogLevel: (res, err) => {
     if (process.env.NODE_ENV !== 'production') return 'silent'
+    if (!res.statusCode) return 'info'
 
     if (res.statusCode >= 400 && res.statusCode < 500) {
       return 'warn'

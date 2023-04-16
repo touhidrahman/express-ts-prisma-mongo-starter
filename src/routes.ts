@@ -8,10 +8,10 @@ import * as comment from './modules/comment/comment.controller'
 import * as like from './modules/like/like.controller'
 import { checkToken } from './middleware/check-token'
 import { requireAdmin, requireUser } from './middleware/require-user'
-import { uploadLocal, uploadS3 } from './middleware/upload'
 import validate from './middleware/validate'
 import { assetQuerySchema } from './modules/asset/asset.schema'
 import { authSchema, forgotPasswordSchema, registerSchema, resetPasswordSchema } from './modules/auth/auth.schema'
+import { uploadLocal } from './middleware/upload'
 
 function routes(app: Express) {
   app.get('/v1/healthcheck', (req: Request, res: Response) => res.sendStatus(200))
@@ -41,7 +41,7 @@ function routes(app: Express) {
 
   app.get('/v1/assets', validate(assetQuerySchema), asset.getAssetHandler)
   app.post('/v1/assets', requireUser, uploadLocal.single('file'), asset.uploadAssetHandler)
-  app.post('/v1/assets-multi', requireUser, uploadS3.array('files'), asset.uploadMultipleAssetHandler)
+  // app.post('/v1/assets-multi', requireUser, uploadS3.array('files'), asset.uploadMultipleAssetHandler)
   app.delete('/v1/assets', validate(assetQuerySchema), requireUser, asset.deleteAssetHandler)
   app.get('/v1/download', validate(assetQuerySchema), requireUser, asset.downloadAssetHandler)
 

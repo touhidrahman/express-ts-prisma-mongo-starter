@@ -32,7 +32,7 @@ export const checkToken = (type: 'EmailChange' | 'EmailVerification' | 'Password
       }
 
       if (!record) throw new Error('Invalid token')
-      if (record.validUntil < new Date()) throw new Error('Token expired')
+      if (record.validUntil < new Date()) throw new Error('Token expired') // TODO use dayjs
 
       res.locals.user = record.user
       next()

@@ -2,12 +2,12 @@ import { Prisma } from '@prisma/client'
 import { Request, Response } from 'express'
 import prismaClient from '../../db/prisma'
 import { CommonQueryParams } from '../../interfaces/query-params'
-import { doCache, fromCache } from '../../redis/redis.service'
+import { entityLogger } from '../../logger/logger.service'
+import { doCache, fromCache } from '../../cache/cache.service'
 import { buildResponseMessages } from '../../utils/response-messages.util'
-import logger from '../../logger/logger.service'
 
 const entity = 'post'
-const logDomain = entity.toUpperCase()
+const log = entityLogger(entity)
 const service = prismaClient[entity]
 const resMessages = buildResponseMessages(entity)
 type CreateInput = Prisma.PostCreateManyInput
@@ -42,7 +42,7 @@ export async function getMany(req: Request<{}, {}, {}, CommonQueryParams>, res: 
 
     res.send(result)
   } catch (error: any) {
-    logger.error(`${logDomain}: ${error.message}`)
+    log.error(error.message)
     res.status(500).send({ message: resMessages.serverError })
   }
 }
@@ -67,7 +67,7 @@ export async function getOne(req: Request, res: Response) {
 
     return res.json(result)
   } catch (e: any) {
-    logger.error(`${logDomain}: ${resMessages.notFound}. ${e.message}`)
+    log.error(`${resMessages.notFound}. ${e.message}`)
     return res.status(400).json({ message: e.message })
   }
 }
@@ -84,10 +84,10 @@ export async function create(req: Request<{}, {}, CreateInput>, res: Response) {
       },
     })
 
-    logger.info(`${logDomain}: ${resMessages.created}.`)
+    log.info(resMessages.created)
     res.send(result)
   } catch (error: any) {
-    logger.error(`${logDomain}: ${resMessages.createFailed}. ${error.message}`)
+    log.error(`${resMessages.createFailed}. ${error.message}`)
     res.status(500).send({ message: resMessages.createFailed })
   }
 }
@@ -104,10 +104,10 @@ export async function update(req: Request<{ id: string }, {}, UpdateInput>, res:
       },
     })
 
-    logger.info(`${logDomain}: ${resMessages.updated}.`)
+    log.info(resMessages.updated)
     res.send(result)
   } catch (error: any) {
-    logger.error(`${logDomain}: ${resMessages.updateFailed}. ${error.message}`)
+    log.error(`${resMessages.updateFailed}. ${error.message}`)
     res.status(500).send({ message: resMessages.updateFailed })
   }
 }
@@ -120,10 +120,10 @@ export async function deleteOne(req: Request<{ id: string }, {}>, res: Response)
       where: { id },
     })
 
-    logger.info(`${logDomain}: ${resMessages.deleted}.`)
+    log.info(resMessages.deleted)
     res.send(result)
   } catch (error: any) {
-    logger.error(`${logDomain}: ${resMessages.deleteFailed} ${error.message}`)
+    log.error(`${resMessages.deleteFailed}. ${error.message}`)
     res.status(500).send({ message: resMessages.deleteFailed })
   }
 }
