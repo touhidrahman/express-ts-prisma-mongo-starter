@@ -10,7 +10,7 @@ POST {{host}}/v1/auth/register
 Content-Type: application/json
 
 {
-  "email": "a2@b.com",
+  "email": "a21@b.com",
   "password": "Abcd1234!",
   "passwordConfirmation": "Abcd1234!",
   "firstName": "A",
@@ -52,7 +52,7 @@ POST {{host}}/v1/auth/login
 Content-Type: application/json
 
 {
-  "email": "a@b.com",
+  "email": "a2@b.com",
   "password": "Abcd1234!"
 }
 

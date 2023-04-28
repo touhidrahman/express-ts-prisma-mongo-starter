@@ -1,3 +1,3 @@
-import cache from 'memory-cache';
+const kvjs = require('@heyputer/kv.js');
 
-export const memoryCache = new cache.Cache();
+export const memoryCache = new kvjs();
