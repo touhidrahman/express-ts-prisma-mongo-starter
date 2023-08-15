@@ -36,6 +36,9 @@ app.use(helmet())
 app.use(rateLimiter)
 app.use(parseJwt)
 
+// routes
+app.use(routes)
+
 const httpServer = createServer(app)
 const io = new Server(httpServer, {
   cors: {
@@ -49,7 +52,6 @@ httpServer.listen(PORT, async () => {
 
   logger.info(`🚀 App is running at http://localhost:${PORT}`)
 
-  routes(app)
   isSwaggerInUse && swaggerDocs(app, PORT)
   isSocketInUse && socket({ io })
 })
