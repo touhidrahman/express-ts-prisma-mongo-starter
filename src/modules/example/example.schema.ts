@@ -1,48 +1,26 @@
-import { object, number, string, TypeOf } from 'zod'
+import z from 'zod'
+import { CommonQueryParamsSchema } from '../../interfaces/query-params'
 
-const payload = {
-  body: object({
-    title: string({
-      required_error: 'Title is required',
-    }),
-    description: string({
-      required_error: 'Description is required',
-    }).min(120, 'Description should be at least 120 characters long'),
-    price: number({
-      required_error: 'Price is required',
-    }),
-    image: string({
-      required_error: 'Image is required',
-    }),
-  }),
-}
-
-const params = {
-  params: object({
-    productId: string({
-      required_error: 'productId is required',
-    }),
-  }),
-}
-
-export const createProductSchema = object({
-  ...payload,
+export const CreateExampleSchema = z.object({
+    name: z.string({ required_error: 'Name is required' }),
+    email: z.string().email(),
+    phone: z.string().optional(),
+    note: z.string().optional(),
+    role: z.string(),
+    customerId: z.string(),
+    type: z.enum(['None', 'Cloud', 'OnPrem', 'Outsource']),
 })
 
-export const updateProductSchema = object({
-  ...payload,
-  ...params,
+export const UpdateExampleSchema = CreateExampleSchema.partial().extend({
+    id: z.string(),
 })
 
-export const deleteProductSchema = object({
-  ...params,
+export const ExampleFindManyQueryParamsSchema = CommonQueryParamsSchema.extend({
+    ids: z.array(z.string()).optional().nullable(),
 })
 
-export const getProductSchema = object({
-  ...params,
+export const ExampleCountQueryParamsSchema = ExampleFindManyQueryParamsSchema.omit({
+    page: true,
+    size: true,
+    orderBy: true,
 })
-
-export type CreateProductInput = TypeOf<typeof createProductSchema>
-export type UpdateProductInput = TypeOf<typeof updateProductSchema>
-export type ReadProductInput = TypeOf<typeof getProductSchema>
-export type DeleteProductInput = TypeOf<typeof deleteProductSchema>
